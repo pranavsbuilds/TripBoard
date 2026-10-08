@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripBoard - Admin Suite Preview (Matched to admin.html, employees.html, trips.html)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-dark": "#071D3A",
+                        "primary-blue": "#172B4D",
+                        "brand-blue": "#2E5BFF",
+                        "bg-ice": "#EAF5FC",
+                        "accent-gold": "#D4AF37",
+                        "accent-gold-hover": "#A98717",
+                        "gold-btn": "#C9A227",
+                        "gold-btn-hover": "#A98717",
+                        "gold-light": "#F4D675",
+                        "status-green": "#2ECC71",
+                        "status-orange": "#F39C12",
+                        "footer-text": "#B8C9DA",
+                    },
+                    borderRadius: {
+                        "xl": "12px",
+                        "2xl": "16px",
+                    },
+                    boxShadow: {
+                        "card": "0 4px 20px rgba(0,0,0,0.08)",
+                        "nav": "0 4px 20px rgba(7,29,58,0.25)",
+                        "btn-gold": "0 4px 10px rgba(201,162,39,0.35)",
+                        "btn-gold-hover": "0 6px 15px rgba(201,162,39,0.50)",
+                    },
+                    fontFamily: {
+                        sans: ["Arial", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg-ice text-primary-blue font-sans m-0 min-h-screen flex flex-col justify-between">
+
+    <!-- TOP PREVIEW SWITCHER BAR -->
+    <div class="bg-slate-900 border-b border-slate-800 px-6 py-2.5 flex items-center justify-between text-xs text-white">
+        <span class="font-bold text-accent-gold">Admin Suite Preview (Milestone 5)</span>
+        <div class="flex gap-2">
+            <button onclick="showView('dashboard')" id="btn-dashboard" class="px-3 py-1 rounded bg-gold-btn text-primary-dark font-bold">1. Admin Dashboard</button>
+            <button onclick="showView('employees')" id="btn-employees" class="px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white">2. Employees Directory</button>
+            <button onclick="showView('trips')" id="btn-trips" class="px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white">3. Trips Management</button>
+            <button onclick="showView('create-trip')" id="btn-create-trip" class="px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white">4. Create Trip (India UI)</button>
+        </div>
+    </div>
+
+    <!-- SHARED ADMIN NAVBAR (Matching DESIGNS/shared-components-preview.html & admin.html) -->
+    <header class="min-h-[110px] md:h-[125px] relative flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-3 md:py-0 gap-3 md:gap-0 bg-cover bg-right md:bg-center bg-no-repeat shadow-nav border-b border-slate-200" style="background-image: url('../Assets/bg2.png'); background-color: #0c3370;">
+        <a href="#" class="relative z-10 flex items-center gap-3.5 group no-underline">
+            <img src="../Assets/logo_svg.svg" alt="TripBoard Logo" class="h-12 md:h-14 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-105">
+            <div class="flex flex-col">
+                <span class="text-white font-black text-2xl md:text-[27px] tracking-[2px] leading-none drop-shadow-md">TRIPBOARD</span>
+                <span class="text-sky-200/90 text-[10px] md:text-[11px] font-medium tracking-wider mt-1 leading-none drop-shadow-sm">Corporate Travel Management. Simplified.</span>
+            </div>
+        </a>
+
+        <nav class="relative z-10 flex items-center gap-6 md:gap-8">
+            <button onclick="showView('dashboard')" id="nav-dashboard" class="text-gold-light font-semibold text-sm md:text-[15px] border-b-2 border-accent-gold pb-0.5">Dashboard</button>
+            <button onclick="showView('employees')" id="nav-employees" class="text-white font-semibold text-sm md:text-[15px] hover:text-gold-light transition">Employees</button>
+            <button onclick="showView('trips')" id="nav-trips" class="text-white font-semibold text-sm md:text-[15px] hover:text-gold-light transition">Trips</button>
+            <a href="login-preview.html" class="bg-gold-btn hover:bg-gold-btn-hover text-white text-sm font-semibold py-2 px-5 rounded-md shadow-btn-gold transition">
+                Logout
+            </a>
+        </nav>
+    </header>
+
+    <!-- VIEW 1: ADMIN DASHBOARD (Matching admin.html) -->
+    <main id="view-dashboard" class="flex-1 max-w-6xl w-full mx-auto p-6 md:p-10 space-y-8">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-black text-primary-dark tracking-wide">WELCOME, ADMIN</h1>
+            <p class="text-sm text-slate-500 mt-1">Manage your company's business travel, employees and budgets from one centralized suite.</p>
+        </div>
+
+        <!-- STATS / KPI CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 flex items-center gap-5">
+                <div class="w-14 h-14 bg-sky-50 rounded-2xl flex items-center justify-center text-2xl text-brand-blue">👥</div>
+                <div>
+                    <h3 class="text-3xl font-extrabold text-primary-dark">12</h3>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Total Employees</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 flex items-center gap-5">
+                <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-2xl text-status-green">✈</div>
+                <div>
+                    <h3 class="text-3xl font-extrabold text-primary-dark">3</h3>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Active Trips</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 flex items-center gap-5">
+                <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-2xl text-status-orange">📅</div>
+                <div>
+                    <h3 class="text-3xl font-extrabold text-primary-dark">5</h3>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Upcoming Trips</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 flex items-center gap-5">
+                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-2xl text-brand-blue">₹</div>
+                <div>
+                    <h3 class="text-2xl font-extrabold text-primary-dark">₹ 4,75,000</h3>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Allocated Budget</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="space-y-4">
+            <h2 class="text-lg font-bold text-primary-dark tracking-wide">QUICK ACTIONS</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <button onclick="showView('employees')" class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 hover:border-brand-blue text-left transition flex items-center gap-5 group">
+                    <span class="w-12 h-12 rounded-xl bg-sky-50 text-brand-blue font-bold text-2xl flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white transition">＋</span>
+                    <div>
+                        <h3 class="text-base font-bold text-primary-dark">Add New Employee</h3>
+                        <p class="text-xs text-slate-500 mt-1">Register a new team member and issue credentials.</p>
+                    </div>
+                </button>
+
+                <button onclick="showView('create-trip')" class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 hover:border-gold-btn text-left transition flex items-center gap-5 group">
+                    <span class="w-12 h-12 rounded-xl bg-amber-50 text-gold-btn font-bold text-2xl flex items-center justify-center group-hover:bg-gold-btn group-hover:text-white transition">✈</span>
+                    <div>
+                        <h3 class="text-base font-bold text-primary-dark">Create New Trip</h3>
+                        <p class="text-xs text-slate-500 mt-1">Plan an itinerary, allocate ₹ budget, and assign a coordinator.</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- RECENT TRIPS PREVIEW -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-primary-dark tracking-wide">UPCOMING BUSINESS TRIPS</h2>
+                <button onclick="showView('trips')" class="text-sm font-bold text-[#1659A5] hover:text-gold-btn transition">View All Trips →</button>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-sky-50 rounded-xl flex items-center justify-center text-2xl">✈</div>
+                    <div>
+                        <h3 class="text-base font-bold text-primary-dark">Dubai Business Conference</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">📍 Dubai, UAE · 📅 20/09/2026 – 27/09/2026 (DD/MM/YYYY)</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <span class="text-sm font-bold text-primary-dark font-mono">₹ 1,50,000</span>
+                    <span class="px-3 py-1 bg-sky-100 text-brand-blue font-bold text-xs rounded-full">Business Conference</span>
+                    <button onclick="showView('trips')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-primary-dark text-xs font-bold rounded-lg transition">View Details →</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- VIEW 2: EMPLOYEES DIRECTORY (Matching employees.html) -->
+    <main id="view-employees" class="hidden flex-1 max-w-6xl w-full mx-auto p-6 md:p-10 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-primary-dark tracking-wide">EMPLOYEE MANAGEMENT</h1>
+                <p class="text-sm text-slate-500 mt-1">Manage your company's directory, assignments, and contact records.</p>
+            </div>
+            <button onclick="toggleAddModal()" class="px-5 py-3 bg-gold-btn hover:bg-gold-btn-hover text-white font-bold text-sm rounded-xl shadow-btn-gold transition">
+                + Add Employee
+            </button>
+        </div>
+
+        <!-- SEARCH BAR & FILTER -->
+        <div class="bg-white p-4 rounded-2xl shadow-card border border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <input type="text" placeholder="Search by name, email, or employee code..." class="w-full sm:w-96 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-brand-blue">
+            <div class="flex gap-2">
+                <span class="px-3 py-1.5 bg-sky-50 text-brand-blue font-bold text-xs rounded-lg">All (12)</span>
+                <span class="px-3 py-1.5 bg-slate-50 text-slate-600 font-semibold text-xs rounded-lg">Active (9)</span>
+                <span class="px-3 py-1.5 bg-slate-50 text-slate-600 font-semibold text-xs rounded-lg">On Trip (3)</span>
+            </div>
+        </div>
+
+        <!-- EMPLOYEE CARDS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="w-12 h-12 rounded-full bg-primary-dark text-gold-light font-bold flex items-center justify-center">RS</div>
+                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">Active</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-primary-dark">Rahul Sharma</h3>
+                    <p class="text-xs text-slate-500">EMP001 · Software Engineer</p>
+                </div>
+                <div class="text-xs text-slate-600 space-y-1 border-t border-slate-100 pt-3">
+                    <p>✉ rahul.sharma@company.com</p>
+                    <p>📞 +91 98765 43210</p>
+                    <p>🏢 IT Department</p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="w-12 h-12 rounded-full bg-primary-dark text-gold-light font-bold flex items-center justify-center">AP</div>
+                    <span class="px-2.5 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">On Trip</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-primary-dark">Aman Patel</h3>
+                    <p class="text-xs text-slate-500">EMP002 · Product Manager</p>
+                </div>
+                <div class="text-xs text-slate-600 space-y-1 border-t border-slate-100 pt-3">
+                    <p>✉ aman.patel@company.com</p>
+                    <p>📞 +91 91234 56789</p>
+                    <p>🏢 Operations</p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="w-12 h-12 rounded-full bg-primary-dark text-gold-light font-bold flex items-center justify-center">PS</div>
+                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">Active</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-primary-dark">Priya Singh</h3>
+                    <p class="text-xs text-slate-500">EMP003 · Finance Lead</p>
+                </div>
+                <div class="text-xs text-slate-600 space-y-1 border-t border-slate-100 pt-3">
+                    <p>✉ priya.singh@company.com</p>
+                    <p>📞 +91 99887 76655</p>
+                    <p>🏢 Finance</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- VIEW 3: TRIPS MANAGEMENT (Matching trips.html) -->
+    <main id="view-trips" class="hidden flex-1 max-w-6xl w-full mx-auto p-6 md:p-10 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-primary-dark tracking-wide">TRIP MANAGEMENT</h1>
+                <p class="text-sm text-slate-500 mt-1">Plan, monitor and oversee corporate travel itineraries and budget expenditures.</p>
+            </div>
+            <button onclick="showView('create-trip')" class="px-5 py-3 bg-gold-btn hover:bg-gold-btn-hover text-white font-bold text-sm rounded-xl shadow-btn-gold transition">
+                ＋ Create New Trip
+            </button>
+        </div>
+
+        <!-- TRIPS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Trip Card 1 -->
+            <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">Upcoming</span>
+                    <span class="font-mono font-bold text-primary-dark text-sm">₹ 1,50,000</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-primary-dark">Dubai Business Conference</h3>
+                    <p class="text-xs text-slate-500">📍 Dubai, United Arab Emirates</p>
+                </div>
+                <div class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl space-y-1">
+                    <p><strong>Dates:</strong> 20/09/2026 – 27/09/2026 (DD/MM/YYYY)</p>
+                    <p><strong>Coordinator:</strong> Aman Patel (EMP002)</p>
+                    <p><strong>Travelers:</strong> Rahul Sharma, Aman Patel</p>
+                </div>
+            </div>
+
+            <!-- Trip Card 2 -->
+            <div class="bg-white rounded-2xl p-6 shadow-card border border-slate-100 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">In Progress</span>
+                    <span class="font-mono font-bold text-primary-dark text-sm">₹ 85,000</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-primary-dark">Bengaluru Tech Summit</h3>
+                    <p class="text-xs text-slate-500">📍 Bengaluru, India</p>
+                </div>
+                <div class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl space-y-1">
+                    <p><strong>Dates:</strong> 05/10/2026 – 10/10/2026 (DD/MM/YYYY)</p>
+                    <p><strong>Coordinator:</strong> Priya Singh (EMP003)</p>
+                    <p><strong>Travelers:</strong> Priya Singh</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- VIEW 4: CREATE TRIP (Matching create-trip.html with India standards) -->
+    <main id="view-create-trip" class="hidden flex-1 max-w-4xl w-full mx-auto p-6 md:p-10 space-y-6">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-black text-primary-dark tracking-wide">CREATE NEW TRIP</h1>
+            <p class="text-sm text-slate-500 mt-1">Specify destination, India-standard date schedule, ₹ budget, and assign team members.</p>
+        </div>
+
+        <form class="bg-white p-8 rounded-2xl shadow-card border border-slate-100 space-y-6" onsubmit="event.preventDefault();">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-600 mb-1.5">Trip Title</label>
+                    <input type="text" value="London Client Summit" class="w-full px-4 py-3 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none focus:border-brand-blue" required>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-600 mb-1.5">Destination & Country</label>
+                    <input type="text" value="London, United Kingdom" class="w-full px-4 py-3 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none focus:border-brand-blue" required>
+                </div>
+            </div>
+
+            <!-- INDIA STANDARDS ROW: DATES (DD/MM/YYYY) + RUPEES (₹) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-primary-dark mb-1.5">Start Date (DD/MM/YYYY)</label>
+                    <input type="text" value="15/11/2026" class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-primary-blue outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-primary-dark mb-1.5">End Date (DD/MM/YYYY)</label>
+                    <input type="text" value="22/11/2026" class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-primary-blue outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-primary-dark mb-1.5">Budget in Rupees (₹)</label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-3 text-primary-dark font-bold">₹</span>
+                        <input type="text" value="2,40,000" class="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-bold text-primary-dark outline-none font-mono" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRAVELERS SELECTION & AUTO-COORDINATOR -->
+            <div class="space-y-3">
+                <h3 class="text-sm font-bold text-primary-dark uppercase">Assign Travelers & Coordinator</h3>
+                <p class="text-xs text-slate-500">First traveler is automatically designated as Trip Coordinator (can be updated).</p>
+                <div class="space-y-2">
+                    <label class="flex items-center justify-between p-3.5 rounded-xl border border-brand-blue bg-sky-50/50 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" checked class="w-4 h-4 text-brand-blue rounded">
+                            <span class="text-sm font-bold text-primary-dark">Rahul Sharma (EMP001 · Software Engineer)</span>
+                        </div>
+                        <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">⭐ Designated Coordinator</span>
+                    </label>
+
+                    <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" checked class="w-4 h-4 text-brand-blue rounded">
+                            <span class="text-sm font-semibold text-primary-dark">Priya Singh (EMP003 · Finance Lead)</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Traveler</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-4 bg-gradient-to-r from-gold-btn to-[#E0B82F] hover:from-gold-btn-hover hover:to-gold-btn text-white font-bold rounded-xl shadow-btn-gold transition">
+                SAVE & PUBLISH TRIP
+            </button>
+        </form>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary-dark text-footer-text text-center py-5 px-4 text-sm mt-auto">
+        <p class="m-0">© 2026 TripBoard. All Rights Reserved.</p>
+    </footer>
+
+    <!-- INTERACTIVE SWITCHER JS -->
+    <script>
+        function showView(viewId) {
+            ['dashboard', 'employees', 'trips', 'create-trip'].forEach(v => {
+                document.getElementById('view-' + v).classList.add('hidden');
+                const btn = document.getElementById('btn-' + v);
+                if (btn) btn.className = 'px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white';
+            });
+            document.getElementById('view-' + viewId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + viewId);
+            if (activeBtn) activeBtn.className = 'px-3 py-1 rounded bg-gold-btn text-primary-dark font-bold';
+
+            // Update nav active tab
+            ['dashboard', 'employees', 'trips'].forEach(n => {
+                const nav = document.getElementById('nav-' + n);
+                if (nav) nav.className = 'text-white font-semibold text-sm md:text-[15px] hover:text-gold-light transition';
+            });
+            const activeNav = document.getElementById('nav-' + viewId);
+            if (activeNav) activeNav.className = 'text-gold-light font-semibold text-sm md:text-[15px] border-b-2 border-accent-gold pb-0.5';
+        }
+    </script>
+</body>
+</html>

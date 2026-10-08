@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripBoard - Employee Documents</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-dark": "#071D3A",
+                        "primary-blue": "#172B4D",
+                        "brand-blue": "#2E5BFF",
+                        "bg-ice": "#EAF5FC",
+                        "accent-gold": "#D4AF37",
+                        "status-green": "#2ECC71",
+                        "status-orange": "#F39C12",
+                        "status-red": "#E74C3C",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans">
+
+<!-- Header -->
+<header class="bg-primary-dark text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div>
+            <h1 class="text-xl font-bold tracking-wider">TRIPBOARD</h1>
+            <p class="text-[10px] text-blue-200 uppercase tracking-widest">Employee Portal</p>
+        </div>
+    </div>
+    <nav class="flex gap-6 items-center">
+        <a href="employee-dashboard.html" class="text-slate-300 hover:text-white transition-colors">Dashboard</a>
+        <a href="#" class="text-accent-gold font-medium border-b-2 border-accent-gold pb-1">Documents</a>
+        <div class="flex items-center gap-3 ml-4 pl-4 border-l border-white/20">
+            <div class="text-right">
+                <p class="text-sm font-medium">Rahul Sharma</p>
+                <p class="text-xs text-slate-400">Software Engineer</p>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-brand-blue flex items-center justify-center font-bold text-sm shadow-inner">
+                RS
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="max-w-4xl mx-auto px-6 py-8">
+    
+    <div class="mb-6 flex justify-between items-end">
+        <div>
+            <a href="employee-dashboard.html" class="text-brand-blue text-sm font-medium hover:underline mb-2 inline-flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Back to Dashboard
+            </a>
+            <h2 class="text-3xl font-bold text-primary-dark">My Travel Documents</h2>
+            <p class="text-slate-500 mt-1">Upload and manage required documents for your upcoming trips.</p>
+        </div>
+    </div>
+
+    <!-- Active Trip Context -->
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-8 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center text-brand-blue">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            <div>
+                <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider">Selected Trip</p>
+                <p class="font-bold text-primary-dark">Dubai Tech Summit 2026</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-status-orange/10 text-status-orange text-sm font-semibold">
+                <span class="w-2 h-2 rounded-full bg-status-orange"></span>
+                Action Required (4/5 Verified)
+            </span>
+        </div>
+    </div>
+
+    <!-- Document List -->
+    <div class="space-y-4">
+        
+        <!-- Passport (Verified) -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-primary-dark">Passport Copy</h4>
+                    <p class="text-sm text-slate-500">Front and back pages.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <span class="flex items-center gap-1.5 text-status-green font-medium text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    Verified
+                </span>
+                <button class="text-brand-blue text-sm font-medium hover:underline">View File</button>
+            </div>
+        </div>
+
+        <!-- Visa (Verified) -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-primary-dark">Travel Visa</h4>
+                    <p class="text-sm text-slate-500">Valid visa for UAE.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <span class="flex items-center gap-1.5 text-status-green font-medium text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    Verified
+                </span>
+                <button class="text-brand-blue text-sm font-medium hover:underline">View File</button>
+            </div>
+        </div>
+
+        <!-- Flight Ticket (Pending) -->
+        <div class="bg-orange-50/50 border-2 border-orange-200 rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-primary-dark">Flight Ticket</h4>
+                        <p class="text-sm text-slate-500">Round-trip ticket confirmation.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <span class="flex items-center gap-1.5 text-status-orange font-medium text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Pending Upload
+                    </span>
+                </div>
+            </div>
+            <div class="mt-4 border-2 border-dashed border-orange-300 rounded-lg p-6 text-center bg-white">
+                <svg class="w-8 h-8 text-orange-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                <p class="text-sm font-medium text-primary-dark mb-1">Click to upload or drag and drop</p>
+                <p class="text-xs text-slate-500 mb-3">PDF, JPG, or PNG (max. 10MB)</p>
+                <button class="px-4 py-2 bg-orange-100 text-orange-700 text-sm font-semibold rounded-lg hover:bg-orange-200 transition-colors">
+                    Select File
+                </button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

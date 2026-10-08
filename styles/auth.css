@@ -1,0 +1,121 @@
+/* ==============================================================================
+   Cyber-Tech & Glassmorphism Authentication Styles
+   Can be imported into globals.css or directly into your auth layouts.
+   ============================================================================== */
+
+:root {
+  --color-tech-bg: #0b0f19;
+  --color-tech-surface: #131b2f;
+  --color-tech-surface-hover: #1a243e;
+  --color-tech-border: #1e293b;
+  --color-tech-accent: #00f0ff;
+  --color-tech-accent-hover: #00d1e6;
+  --color-tech-text: #e2e8f0;
+  --color-tech-muted: #94a3b8;
+  --color-tech-error: #ff2a55;
+  --color-tech-error-bg: rgba(127, 29, 29, 0.4);
+  --color-tech-error-border: rgba(239, 68, 68, 0.4);
+  --color-tech-success: #00e676;
+  --color-tech-success-bg: rgba(20, 83, 45, 0.4);
+  --color-tech-success-border: rgba(34, 197, 94, 0.4);
+}
+
+/* Glassmorphic card panel */
+.glass-panel {
+  background: rgba(19, 27, 47, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-tech-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Form text input */
+.tech-input {
+  background: var(--color-tech-surface);
+  border: 1px solid var(--color-tech-border);
+  color: var(--color-tech-text);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.tech-input:focus {
+  outline: none;
+  border-color: var(--color-tech-accent);
+  box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.2);
+}
+
+.tech-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary solid button */
+.tech-button {
+  background: var(--color-tech-accent);
+  color: #0b0f19;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-button:hover:not(:disabled) {
+  background: var(--color-tech-accent-hover);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.tech-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Secondary outline button */
+.tech-button-outline {
+  background: transparent;
+  color: var(--color-tech-accent);
+  border: 1px solid var(--color-tech-accent);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-button-outline:hover:not(:disabled) {
+  background: rgba(0, 240, 255, 0.1);
+}
+
+.tech-button-outline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Shake animation on invalid input */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}

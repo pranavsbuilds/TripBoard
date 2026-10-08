@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripBoard - Trip Creation & Employee Trip Card Preview</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-dark": "#071D3A",
+                        "primary-blue": "#172B4D",
+                        "brand-blue": "#2E5BFF",
+                        "bg-ice": "#EAF5FC",
+                        "accent-gold": "#D4AF37",
+                        "accent-gold-hover": "#A98717",
+                        "gold-btn": "#C9A227",
+                        "gold-btn-hover": "#A98717",
+                        "gold-light": "#F4D675",
+                        "status-green": "#2ECC71",
+                        "status-orange": "#F39C12",
+                        "footer-text": "#B8C9DA",
+                    },
+                    borderRadius: {
+                        "xl": "12px",
+                        "2xl": "16px",
+                    },
+                    boxShadow: {
+                        "card": "0 4px 20px rgba(0,0,0,0.08)",
+                        "nav": "0 4px 20px rgba(7,29,58,0.25)",
+                        "btn-gold": "0 4px 10px rgba(201,162,39,0.35)",
+                        "btn-gold-hover": "0 6px 15px rgba(201,162,39,0.50)",
+                    },
+                    fontFamily: {
+                        sans: ["Arial", "sans-serif"],
+                        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg-ice text-primary-blue font-sans m-0 min-h-screen flex flex-col justify-between">
+
+    <!-- TOP PREVIEW SWITCHER BAR -->
+    <div class="bg-slate-900 border-b border-slate-800 px-6 py-2.5 flex items-center justify-between text-xs text-white">
+        <span class="font-bold text-accent-gold">Trip Creation & Employee Card (Referenced from Assets/tripboard.claude.jsx)</span>
+        <div class="flex gap-2">
+            <button onclick="showSection('create')" id="btn-create" class="px-3 py-1 rounded bg-gold-btn text-primary-dark font-bold">1. Trip Creation Workflow</button>
+            <button onclick="showSection('card')" id="btn-card" class="px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white">2. Employee Side Trip Card</button>
+        </div>
+    </div>
+
+    <!-- SHARED NAVBAR -->
+    <header class="min-h-[110px] md:h-[125px] relative flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-3 md:py-0 gap-3 md:gap-0 bg-cover bg-right md:bg-center bg-no-repeat shadow-nav border-b border-slate-200" style="background-image: url('../Assets/bg2.png'); background-color: #0c3370;">
+        <a href="#" class="relative z-10 flex items-center gap-3.5 group no-underline">
+            <img src="../Assets/logo_svg.svg" alt="TripBoard Logo" class="h-12 md:h-14 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-105">
+            <div class="flex flex-col">
+                <span class="text-white font-black text-2xl md:text-[27px] tracking-[2px] leading-none drop-shadow-md">TRIPBOARD</span>
+                <span class="text-sky-200/90 text-[10px] md:text-[11px] font-medium tracking-wider mt-1 leading-none drop-shadow-sm">Corporate Travel Management. Simplified.</span>
+            </div>
+        </a>
+
+        <nav class="relative z-10 flex items-center gap-6">
+            <span class="text-white text-sm font-semibold">Admin / Coordinator Preview</span>
+            <span class="bg-gold-btn text-primary-dark text-xs font-bold py-1.5 px-3 rounded-md shadow-btn-gold">Active Session</span>
+        </nav>
+    </header>
+
+    <!-- SECTION 1: TRIP CREATION WORKFLOW (Referencing Assets/tripboard.claude.jsx + Separate Group/Individual Budget) -->
+    <main id="section-create" class="flex-1 max-w-4xl w-full mx-auto p-6 md:p-10 space-y-6">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs uppercase tracking-wider font-bold text-brand-blue bg-sky-100 px-2.5 py-0.5 rounded-full">Admin Suite</span>
+                <span class="text-xs text-slate-400">· Assets/tripboard.claude.jsx Architecture</span>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-black text-primary-dark tracking-wide">CREATE NEW TRIP REQUEST</h1>
+            <p class="text-sm text-slate-500 mt-1">
+                Add everyone traveling together — assign a Coordinator, define group bookings budget, and set individual per-diem allowances.
+            </p>
+        </div>
+
+        <form class="bg-white p-8 rounded-2xl shadow-card border border-slate-200 space-y-8" onsubmit="event.preventDefault();">
+            
+            <!-- 1. BASIC TRIP DETAILS -->
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2 flex items-center gap-2">
+                    <span>1. Trip Details</span>
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs uppercase font-bold text-slate-600 mb-1.5">Destination</label>
+                        <input type="text" id="destination" value="Dubai, United Arab Emirates" placeholder="e.g. Chicago, IL or Dubai, UAE" class="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none focus:border-brand-blue font-medium" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase font-bold text-slate-600 mb-1.5">Purpose of Trip</label>
+                        <input type="text" id="purpose" value="Annual Business & Tech Summit" placeholder="e.g. Client renewal meeting, Tech summit" class="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none focus:border-brand-blue font-medium" required>
+                    </div>
+                </div>
+
+                <!-- DATES ROW (India Standard DD/MM/YYYY) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs uppercase font-bold text-slate-600 mb-1.5">Start Date (DD/MM/YYYY)</label>
+                        <input type="text" id="start-date" value="20/09/2026" placeholder="DD/MM/YYYY" class="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none focus:border-brand-blue font-medium" required>
+                        <span class="text-[11px] text-slate-400 mt-0.5 block">Format: DD/MM/YYYY</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase font-bold text-slate-600 mb-1.5">End Date (DD/MM/YYYY)</label>
+                        <input type="text" id="end-date" value="27/09/2026" placeholder="DD/MM/YYYY" class="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none focus:border-brand-blue font-medium" required>
+                        <span class="text-[11px] text-slate-400 mt-0.5 block">Format: DD/MM/YYYY</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. DYNAMIC TRAVELERS & COORDINATOR ASSIGNMENT (From claude.jsx NewTripForm) -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                        2. Travelers & Trip Coordinator
+                    </h3>
+                    <span id="traveler-count-badge" class="text-xs bg-sky-100 text-brand-blue font-bold px-2.5 py-0.5 rounded-full">
+                        2 Travelers
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-500">
+                    Select team members. One traveler is designated as the <strong>Trip Coordinator</strong> who manages shared itinerary bookings and the Group Budget.
+                </p>
+
+                <!-- Dynamic Travelers List -->
+                <div id="travelers-container" class="space-y-3">
+                    <!-- Traveler 1 (Designated Coordinator) -->
+                    <div class="p-4 rounded-xl border-2 border-brand-blue bg-sky-50/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-full bg-primary-dark text-gold-light font-bold text-xs flex items-center justify-center">
+                                RS
+                            </span>
+                            <div>
+                                <h4 class="text-sm font-bold text-primary-dark">Rahul Sharma</h4>
+                                <p class="text-xs text-slate-500">EMP001 · Software Engineer · IT Department</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                ⭐ Trip Coordinator
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Traveler 2 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center">
+                                AP
+                            </span>
+                            <div>
+                                <h4 class="text-sm font-bold text-primary-dark">Aman Patel</h4>
+                                <p class="text-xs text-slate-500">EMP002 · Product Manager · Operations</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <button type="button" class="text-xs font-semibold text-brand-blue hover:underline">
+                                Make Coordinator
+                            </button>
+                            <button type="button" class="text-xs text-red-500 hover:text-red-700 font-semibold ml-2">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-dashed border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-50 transition">
+                    + Add Another Traveler from Directory
+                </button>
+            </div>
+
+            <!-- 3. SEPARATE BUDGET SECTION: GROUP BUDGET VS INDIVIDUAL BUDGET (Requested by User) -->
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">
+                    3. Dual Budget Allocation (INR ₹)
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <!-- Group Budget (Coordinator Managed) -->
+                    <div class="p-5 rounded-xl border border-amber-200 bg-amber-50/30 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs uppercase font-bold text-amber-900">Group Budget (Handled by Coordinator)</label>
+                            <span class="text-[11px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">Coordinator-Scoped</span>
+                        </div>
+                        <p class="text-xs text-slate-600">
+                            Shared capital for flights, hotels, group cabs, and conference passes.
+                        </p>
+                        <div class="relative flex items-center pt-1">
+                            <span class="absolute left-3.5 font-bold text-primary-dark">₹</span>
+                            <input
+                                type="text"
+                                id="group-budget"
+                                value="1,00,000"
+                                oninput="recalcTotal()"
+                                class="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-bold font-mono text-primary-dark outline-none focus:border-gold-btn"
+                                required
+                            >
+                        </div>
+                        <span class="text-[11px] text-slate-400 block">Ex: ₹ 1,00,000 for total shared bookings</span>
+                    </div>
+
+                    <!-- Individual Budget (Per Traveler) -->
+                    <div class="p-5 rounded-xl border border-sky-200 bg-sky-50/30 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs uppercase font-bold text-brand-blue">Individual Budget (Per Traveler)</label>
+                            <span class="text-[11px] bg-sky-100 text-brand-blue font-bold px-2 py-0.5 rounded">Per-Diem Allowance</span>
+                        </div>
+                        <p class="text-xs text-slate-600">
+                            Personal per-diem allowance for meals, local commute, and incidental expenses.
+                        </p>
+                        <div class="relative flex items-center pt-1">
+                            <span class="absolute left-3.5 font-bold text-primary-dark">₹</span>
+                            <input
+                                type="text"
+                                id="indiv-budget"
+                                value="25,000"
+                                oninput="recalcTotal()"
+                                class="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-bold font-mono text-primary-dark outline-none focus:border-brand-blue"
+                                required
+                            >
+                        </div>
+                        <span class="text-[11px] text-slate-400 block">Ex: ₹ 25,000 × 2 travelers = ₹ 50,000</span>
+                    </div>
+
+                </div>
+
+                <!-- TOTAL BUDGET SUMMARY ACCUMULATOR -->
+                <div class="p-5 rounded-xl bg-primary-dark text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs uppercase tracking-wider font-semibold text-slate-400">Total Approved Trip Budget</span>
+                        <div class="text-2xl font-black text-gold-light font-mono mt-0.5" id="total-budget-display">
+                            ₹ 1,50,000
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-300 space-y-1 sm:text-right">
+                        <div>Group Shared: <span class="font-mono font-bold text-white" id="summary-group">₹ 1,00,000</span></div>
+                        <div>Personal Allowances (2×): <span class="font-mono font-bold text-white" id="summary-indiv">₹ 50,000</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="w-full py-4 bg-gradient-to-r from-gold-btn to-[#E0B82F] hover:from-gold-btn-hover hover:to-gold-btn text-white font-bold rounded-xl shadow-btn-gold text-base tracking-wide transition">
+                CREATE TRIP & ASSIGN ROLES
+            </button>
+        </form>
+    </main>
+
+    <!-- SECTION 2: EMPLOYEE SIDE TRIP CARD (Matching Assets/tripboard.claude.jsx TripCard architecture) -->
+    <main id="section-card" class="hidden flex-1 max-w-4xl w-full mx-auto p-6 md:p-10 space-y-6">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs uppercase tracking-wider font-bold text-status-green bg-emerald-100 px-2.5 py-0.5 rounded-full">Employee Portal</span>
+                <span class="text-xs text-slate-400">· TripCard Experience</span>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-black text-primary-dark tracking-wide">MY ASSIGNED TRIPS</h1>
+            <p class="text-sm text-slate-500 mt-1">
+                View your active business trips, coordinator details, shared bookings, and personal expense allowance.
+            </p>
+        </div>
+
+        <!-- THE TRIP CARD (Directly adapted from Assets/tripboard.claude.jsx lines 341-525) -->
+        <div class="bg-white rounded-2xl shadow-card border border-slate-200 overflow-hidden relative">
+            
+            <!-- Left perforation edge indicator from claude.jsx -->
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand-blue"></div>
+
+            <!-- CARD HEADER (Click to toggle expansion) -->
+            <div class="p-6 md:p-7 pl-8 cursor-pointer border-b border-slate-100" onclick="toggleCardDrawer()">
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div>
+                        <!-- Travelers Heading -->
+                        <div class="flex items-center gap-2.5 font-extrabold text-xl text-primary-dark">
+                            <span class="text-slate-400">👥</span>
+                            <span>Rahul Sharma, Aman Patel</span>
+                        </div>
+                        <div class="text-xs font-mono text-slate-400 mt-1">
+                            2 travelers · IT Department, Operations
+                        </div>
+
+                        <!-- Destination & Dates (DD/MM/YYYY) -->
+                        <div class="flex flex-wrap items-center gap-3 mt-3 text-sm text-slate-600 font-medium">
+                            <span class="flex items-center gap-1.5 text-primary-dark">
+                                📍 Dubai, United Arab Emirates
+                            </span>
+                            <span class="text-slate-300">•</span>
+                            <span class="flex items-center gap-1.5 font-mono text-xs text-brand-blue bg-sky-50 px-2 py-0.5 rounded">
+                                📅 20/09/2026 → 27/09/2026
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1 text-xs font-bold font-mono rounded bg-amber-500 text-white">
+                            UPCOMING
+                        </span>
+                        <span id="drawer-arrow" class="text-slate-400 text-lg transition-transform duration-200">
+                            ▼
+                        </span>
+                    </div>
+                </div>
+
+                <!-- PROGRESS BARS: DUAL BUDGET DISPLAY (Group vs Individual) -->
+                <div class="mt-6 space-y-4 pt-4 border-t border-slate-100">
+                    
+                    <!-- 1. GROUP BUDGET PROGRESS (Handled by Coordinator) -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-semibold mb-1.5">
+                            <span class="text-slate-600 flex items-center gap-1.5">
+                                ✈ Group Bookings Budget <span class="text-[10px] text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded font-bold">Coordinator: Rahul</span>
+                            </span>
+                            <span class="font-mono text-slate-700">₹ 78,000 spent / ₹ 1,00,000 budget (78%)</span>
+                        </div>
+                        <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                            <div class="h-full bg-status-green rounded-full" style="width: 78%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 2. MY INDIVIDUAL BUDGET PROGRESS (Meals & Incidentals) -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-semibold mb-1.5">
+                            <span class="text-slate-600 flex items-center gap-1.5">
+                                💼 My Personal Per-Diem Allowance
+                            </span>
+                            <span class="font-mono text-slate-700">₹ 8,400 spent / ₹ 25,000 budget (33.6%)</span>
+                        </div>
+                        <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                            <div class="h-full bg-brand-blue rounded-full" style="width: 33.6%"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- EXPANDABLE DRAWER (Detailed Bookings & Invoices from claude.jsx) -->
+            <div id="card-drawer" class="bg-slate-50/70 p-6 md:p-8 pl-8 space-y-6">
+                
+                <!-- Purpose & Roles -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Purpose</span>
+                        <p class="text-sm font-semibold text-primary-dark">Annual Business & Tech Summit</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Designated Coordinator</span>
+                        <p class="text-sm font-bold text-amber-800">⭐ Rahul Sharma (EMP001)</p>
+                    </div>
+                </div>
+
+                <!-- BOOKINGS LOGGED (Flights, Hotel, Road transport) -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600">
+                            Group Bookings (Handled by Coordinator)
+                        </h4>
+                        <span class="text-xs font-mono text-slate-500">2 confirmed</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <!-- Flight Booking -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-base">✈</span>
+                                <div>
+                                    <span class="font-bold text-primary-dark">Emirates Flight EK-501 (Return Group Tickets)</span>
+                                    <span class="text-xs text-slate-400 block font-mono">Date: 20/09/2026</span>
+                                </div>
+                            </div>
+                            <span class="font-mono font-bold text-primary-dark text-sm">₹ 52,000</span>
+                        </div>
+
+                        <!-- Hotel Booking -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-base">🏢</span>
+                                <div>
+                                    <span class="font-bold text-primary-dark">Marriott Downtown Dubai (Twin Deluxe Rooms)</span>
+                                    <span class="text-xs text-slate-400 block font-mono">Date: 20/09/2026 – 27/09/2026</span>
+                                </div>
+                            </div>
+                            <span class="font-mono font-bold text-primary-dark text-sm">₹ 26,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MY LOGGED INVOICES & EXPENSES -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600">
+                            My Invoices &amp; Per-Diem Expenses
+                        </h4>
+                        <button type="button" class="text-xs font-bold text-brand-blue hover:underline">
+                            + Log New Receipt
+                        </button>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-base">🧾</span>
+                                <div>
+                                    <span class="font-bold text-primary-dark">Client Dinner (Meals)</span>
+                                    <span class="text-xs text-slate-400 block font-mono">21/09/2026 · Al Dawaar Dubai</span>
+                                </div>
+                            </div>
+                            <span class="font-mono font-bold text-primary-dark text-sm">₹ 5,800</span>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-base">🚗</span>
+                                <div>
+                                    <span class="font-bold text-primary-dark">Airport Transfer (Local Transport)</span>
+                                    <span class="text-xs text-slate-400 block font-mono">20/09/2026 · Careem Taxi</span>
+                                </div>
+                            </div>
+                            <span class="font-mono font-bold text-primary-dark text-sm">₹ 2,600</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary-dark text-footer-text text-center py-5 px-4 text-sm mt-auto">
+        <p class="m-0">© 2026 TripBoard. All Rights Reserved.</p>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT -->
+    <script>
+        function showSection(id) {
+            document.getElementById('section-create').classList.add('hidden');
+            document.getElementById('section-card').classList.add('hidden');
+            document.getElementById('btn-create').className = 'px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white';
+            document.getElementById('btn-card').className = 'px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white';
+
+            document.getElementById('section-' + id).classList.remove('hidden');
+            document.getElementById('btn-' + id).className = 'px-3 py-1 rounded bg-gold-btn text-primary-dark font-bold';
+        }
+
+        function toggleCardDrawer() {
+            const drawer = document.getElementById('card-drawer');
+            const arrow = document.getElementById('drawer-arrow');
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                drawer.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function parseNum(str) {
+            return Number(str.replace(/[^0-9]/g, '')) || 0;
+        }
+
+        function recalcTotal() {
+            const groupVal = parseNum(document.getElementById('group-budget').value);
+            const indivVal = parseNum(document.getElementById('indiv-budget').value);
+            const travelerCount = 2; // from sample
+
+            const total = groupVal + (indivVal * travelerCount);
+            document.getElementById('total-budget-display').textContent = '₹ ' + total.toLocaleString('en-IN');
+            document.getElementById('summary-group').textContent = '₹ ' + groupVal.toLocaleString('en-IN');
+            document.getElementById('summary-indiv').textContent = '₹ ' + (indivVal * travelerCount).toLocaleString('en-IN');
+        }
+    </script>
+</body>
+</html>
