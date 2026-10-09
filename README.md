@@ -90,12 +90,12 @@ TripBoard/
 │   └── ui/                           # IndiaDatePicker, IndiaPhoneInput, RupeeInput
 ├── database/
 │   └── schema.sql                    # Full PostgreSQL schema, RLS, triggers & functions
-├── DESIGNS/                          # Approved HTML preview mockups
-├── docs/                             # Architecture plans, ADRs, and daily progress logs
+├── docs/                             # Architecture plans, ADRs, mockups & daily logs
 │   ├── architecture/
 │   ├── decisions/
+│   ├── designs/                      # Approved HTML preview mockups
+│   ├── legacy_html/                  # Preserved legacy templates & assets
 │   └── logs/
-├── legacy_html/                      # Preserved legacy templates & assets
 ├── lib/
 │   ├── supabase/                     # Client, Server, and Middleware Supabase handlers
 │   └── validation.ts                 # Form validations

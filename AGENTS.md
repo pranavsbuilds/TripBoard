@@ -8,7 +8,7 @@
    - No need to store `walkthrough.md` files.
 
 3. **UI / Frontend Development**
-   - Before creating or modifying frontend UI, generate or reference a preview .html file in/from the `DESIGNS` folder.
+   - Before creating or modifying frontend UI, generate or reference a preview .html file in/from the `docs/designs` folder.
    - This file is intended to act as a visual preview and reference for the intended design.
    - Do not write or change UI code until the preview .html file has been explicitly approved by the user.
    - The UI must match the reference .html file.
