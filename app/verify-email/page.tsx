@@ -14,7 +14,7 @@ function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const emailParam = searchParams.get('email') || user?.email || '';
   const [email, setEmail] = useState(emailParam);
@@ -33,8 +33,10 @@ function VerifyEmailContent() {
   }, [emailParam, email]);
 
   useEffect(() => {
-    if (user?.email_confirmed_at) router.replace('/admin');
-  }, [user, router]);
+    if (user?.email_confirmed_at) {
+      router.replace(profile?.role === 'admin' ? '/admin' : '/employee/dashboard');
+    }
+  }, [user, profile, router]);
 
   const startCooldown = () => {
     setResendCooldown(RESEND_COOLDOWN);
@@ -121,9 +123,20 @@ function VerifyEmailContent() {
       }
 
       if (data.session || data.user) {
+        // Resolve destination from profile role
+        let destination = '/employee/dashboard';
+        if (data.user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .maybeSingle();
+          if (profile?.role === 'admin') destination = '/admin';
+        }
+
         setSuccessMsg('Email verified successfully! Redirecting...');
         setTimeout(() => {
-          router.replace('/admin');
+          router.replace(destination);
         }, 1500);
       }
     } catch (err) {

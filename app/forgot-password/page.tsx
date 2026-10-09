@@ -77,7 +77,10 @@ function ForgotPasswordContent() {
 
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-        email.trim().toLowerCase()
+        email.trim().toLowerCase(),
+        {
+          redirectTo: `${window.location.origin}/auth/callback?next=/forgot-password`,
+        }
       );
 
       if (resetError) {
@@ -95,6 +98,31 @@ function ForgotPasswordContent() {
     } catch (err) {
       console.error('[ForgotPassword]', err instanceof Error ? err.message : String(err));
       setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Step 2: Resend recovery code
+  const handleResend = async () => {
+    if (resendCooldown > 0 || !email) return;
+    setError('');
+    setLoading(true);
+    try {
+      const { error: resendError } = await supabase.auth.resetPasswordForEmail(
+        email.trim().toLowerCase(),
+        {
+          redirectTo: `${window.location.origin}/auth/callback?next=/forgot-password`,
+        }
+      );
+      if (resendError) {
+        setError(resendError.message || 'Failed to resend recovery code.');
+      } else {
+        startCooldown();
+      }
+    } catch (err) {
+      console.error('[ForgotPassword]', err instanceof Error ? err.message : String(err));
+      setError('Failed to resend. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -195,6 +223,18 @@ function ForgotPasswordContent() {
         otpRefs.current[index - 1]?.focus();
       }
     }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
+    const pasted = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, OTP_LENGTH);
+    if (pasted.length) {
+      const next = Array(OTP_LENGTH).fill('');
+      pasted.split('').forEach((ch, i) => { next[i] = ch; });
+      setOtp(next);
+      const focusIdx = Math.min(pasted.length, OTP_LENGTH - 1);
+      otpRefs.current[focusIdx]?.focus();
+    }
+    e.preventDefault();
   };
 
   const strengthColors = ['bg-slate-200', 'bg-red-400', 'bg-yellow-400', 'bg-blue-500', 'bg-emerald-500'];
@@ -301,6 +341,9 @@ function ForgotPasswordContent() {
           {/* STEP 2: 6-DIGIT OTP */}
           {step === 2 && (
             <form onSubmit={handleVerifyOtp} className="space-y-6">
+              <p className="text-sm text-slate-500 text-center -mt-2">
+                Enter the 6-digit code sent to <strong>{email}</strong>
+              </p>
               <div className="flex gap-2.5 justify-center">
                 {otp.map((digit, i) => (
                   <input
@@ -315,6 +358,7 @@ function ForgotPasswordContent() {
                     value={digit}
                     onChange={(e) => handleOtpChange(i, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(i, e)}
+                    onPaste={i === 0 ? handleOtpPaste : undefined}
                     disabled={loading}
                     className="w-12 h-14 text-center text-2xl font-bold border-2 border-[#D5E5F2] rounded-xl bg-[#F8FCFF] text-[#0B2A55] outline-none transition focus:border-[#1659A5] focus:bg-white focus:ring-2 focus:ring-[#5DB8E8]/20"
                   />
@@ -328,6 +372,19 @@ function ForgotPasswordContent() {
               >
                 {loading ? 'VERIFYING...' : 'VERIFY CODE'}
               </button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendCooldown > 0 || loading}
+                  className="text-sm font-semibold text-[#1659A5] hover:text-gold-btn transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {resendCooldown > 0
+                    ? `Resend code in ${resendCooldown}s`
+                    : 'Resend recovery code'}
+                </button>
+              </div>
             </form>
           )}
 
