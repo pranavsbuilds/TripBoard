@@ -46,7 +46,7 @@ export interface EmployeeTrip {
   status: string;
   coordinator_id?: string;
   coordinator_name?: string;
-  travelers: {
+  travelers?: {
     id: string;
     name: string;
     department?: string;
@@ -82,8 +82,11 @@ export function EmployeeTripCard({
   const groupPct = groupBudget > 0 ? Math.min(100, Math.round((groupSpent / groupBudget) * 100)) : 0;
   const indivPct = individualBudget > 0 ? Math.min(100, Math.round((myExpensesSpent / individualBudget) * 100)) : 0;
 
-  const travelerNames = trip.travelers.map((t) => t.name).join(', ') || 'Unnamed Travelers';
-  const departments = [...new Set(trip.travelers.map((t) => t.department).filter(Boolean))].join(', ');
+  const travelers = trip.travelers || [];
+  const travelerNames = travelers.length > 0
+    ? travelers.map((t) => t.name).join(', ')
+    : 'Assigned Traveler';
+  const departments = [...new Set(travelers.map((t) => t.department).filter(Boolean))].join(', ');
 
   return (
     <div className="bg-white rounded-2xl shadow-card border border-slate-200 overflow-hidden relative transition hover:border-slate-300">
@@ -102,7 +105,8 @@ export function EmployeeTripCard({
               <span>{travelerNames}</span>
             </div>
             <div className="text-xs font-mono text-slate-400 mt-1">
-              {trip.travelers.length} travelers{departments ? ` · ${departments}` : ''}
+              {travelers.length > 0 ? `${travelers.length} traveler${travelers.length === 1 ? '' : 's'}` : 'Assigned Traveler'}
+              {departments ? ` · ${departments}` : ''}
             </div>
 
             <div className="flex flex-wrap items-center gap-3 mt-3 text-sm text-slate-600 font-medium">

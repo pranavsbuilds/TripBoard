@@ -33,8 +33,7 @@ export default async function AdminTripDetailsPage({
       coordinator:employees!trips_coordinator_id_fkey(id, full_name, employee_code, email, phone),
       assignments:trip_assignments(
         id,
-        role,
-        status,
+        is_coordinator,
         employee:employees(id, full_name, employee_code, department, designation, email, phone)
       )
     `)
@@ -55,11 +54,11 @@ export default async function AdminTripDetailsPage({
       file_url,
       status,
       rejection_reason,
-      created_at,
+      uploaded_at,
       employee:employees(full_name, employee_code)
     `)
     .eq('trip_id', id)
-    .order('created_at', { ascending: false });
+    .order('uploaded_at', { ascending: false });
 
   const coordinatorData = Array.isArray(trip.coordinator)
     ? trip.coordinator[0]
@@ -167,7 +166,7 @@ export default async function AdminTripDetailsPage({
               ? assign.employee[0]
               : assign.employee;
             if (!emp) return null;
-            const isCoord = assign.role === 'coordinator' || trip.coordinator_id === emp.id;
+            const isCoord = Boolean(assign.is_coordinator) || trip.coordinator_id === emp.id;
 
             return (
               <div

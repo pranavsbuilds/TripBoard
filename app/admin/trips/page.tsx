@@ -25,7 +25,7 @@ export default async function AdminTripsPage() {
       coordinator:employees!trips_coordinator_id_fkey(full_name, employee_code),
       assignments:trip_assignments(
         id,
-        role,
+        is_coordinator,
         employee:employees(full_name, employee_code, department)
       )
     `)

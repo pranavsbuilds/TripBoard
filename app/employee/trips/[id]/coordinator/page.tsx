@@ -49,7 +49,7 @@ export default async function CoordinatorHubPage({ params }: { params: Promise<{
     `)
     .eq('trip_id', trip.id);
 
-  const travelers = assignments?.map(a => a.employees as any) || [];
+  const travelers = assignments?.map(a => a.employees as any).filter(Boolean) || [];
 
   // Fetch document statuses for these travelers (only for this trip)
   const { data: allDocs } = await supabase
@@ -65,7 +65,7 @@ export default async function CoordinatorHubPage({ params }: { params: Promise<{
     const total = 5; 
     return {
       ...t,
-      initials: t.full_name.split(' ').map((n: string) => n[0]).join('').substring(0, 2),
+      initials: (t.full_name || 'Traveler').split(' ').filter(Boolean).map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() || 'TR',
       isMe: t.id === currentEmployeeId,
       docsVerified: verified,
       docsTotal: total,

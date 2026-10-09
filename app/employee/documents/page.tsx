@@ -33,8 +33,8 @@ export default async function EmployeeDocumentsPage() {
     .eq('employee_id', currentEmployeeId);
 
   const upcomingTrips = (tripData || [])
-    .map(ta => ta.trips as any)
-    .filter(t => new Date(t.start_date) >= new Date())
+    .map((ta) => ta.trips as any)
+    .filter((t) => t && t.start_date && new Date(t.start_date) >= new Date())
     .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
   const selectedTrip = upcomingTrips.length > 0 ? upcomingTrips[0] : null;

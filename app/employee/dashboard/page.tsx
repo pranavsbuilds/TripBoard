@@ -45,10 +45,25 @@ export default async function EmployeeDashboardPage() {
       .eq('employee_id', currentEmployeeId);
       
     if (tripData) {
-      trips = tripData.map(ta => ({
-        ...(ta.trips as any),
-        isCoordinator: ta.is_coordinator || (ta.trips as any).coordinator_id === currentEmployeeId
-      }));
+      trips = tripData
+        .filter((ta) => ta.trips)
+        .map((ta) => {
+          const t = ta.trips as any;
+          return {
+            ...t,
+            isCoordinator: ta.is_coordinator || t.coordinator_id === currentEmployeeId,
+            travelers: [
+              {
+                id: currentEmployeeId,
+                name: employeeData?.full_name || profile?.full_name || 'Traveler',
+                department: profile?.department || undefined,
+                isCoordinator: ta.is_coordinator || t.coordinator_id === currentEmployeeId,
+              },
+            ],
+            bookings: [],
+            invoices: [],
+          };
+        });
     }
   }
 
