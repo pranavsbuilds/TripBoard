@@ -157,7 +157,6 @@ function LoginContent() {
             full_name: regFullName.trim(),
             role: 'admin',
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 

@@ -77,10 +77,7 @@ function ForgotPasswordContent() {
 
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-        email.trim().toLowerCase(),
-        {
-          redirectTo: `${window.location.origin}/auth/callback?next=/forgot-password`,
-        }
+        email.trim().toLowerCase()
       );
 
       if (resetError) {
@@ -110,10 +107,7 @@ function ForgotPasswordContent() {
     setLoading(true);
     try {
       const { error: resendError } = await supabase.auth.resetPasswordForEmail(
-        email.trim().toLowerCase(),
-        {
-          redirectTo: `${window.location.origin}/auth/callback?next=/forgot-password`,
-        }
+        email.trim().toLowerCase()
       );
       if (resendError) {
         setError(resendError.message || 'Failed to resend recovery code.');

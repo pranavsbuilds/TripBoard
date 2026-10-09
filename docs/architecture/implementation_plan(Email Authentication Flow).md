@@ -11,10 +11,10 @@
 
 ## 1. Objective
 Establish a complete, robust, enterprise-grade Supabase Email Authentication flow for TripBoard. The flow encompasses:
-1. **Admin Registration & Verification**: Admin signs up -> receives email with both 6-digit verification code (`{{ .Token }}`) and 1-click confirmation link (`{{ .ConfirmationURL }}`) -> confirms via `/verify-email` OTP or `/auth/callback` link -> lands on `/admin`.
+1. **Admin Registration & Verification**: Admin signs up -> receives email with a 6-digit verification code (`{{ .Token }}`) -> confirms via `/verify-email` OTP -> lands on `/admin`.
 2. **Login Graceful Recovery**: If an unconfirmed user attempts to log in, detects `Email not confirmed` and routes them smoothly to `/verify-email` with resend capabilities.
-3. **Role-Aware Callback Handling**: When confirmation links or recovery links are clicked, `/auth/callback` handles the PKCE code exchange and redirects dynamically to `/admin` or `/employee/dashboard` according to `profiles.role`.
-4. **Password Recovery**: Admin or employee requests reset -> receives OTP/link -> verifies OTP on `/forgot-password` -> updates password -> logs in.
+3. **Role-Aware Redirection**: After OTP verification, queries the user's role and redirects dynamically to `/admin` or `/employee/dashboard` according to `profiles.role`.
+4. **Password Recovery**: Admin or employee requests reset -> receives OTP -> verifies OTP on `/forgot-password` -> updates password -> logs in.
 5. **Supabase Dashboard Setup Guide**: Precise instructions for Supabase Dashboard URL configuration and email template tokens.
 
 ---
@@ -24,36 +24,26 @@ Establish a complete, robust, enterprise-grade Supabase Email Authentication flo
 ### A. Supabase Dashboard Configuration
 - **Site URL**: `http://localhost:3000`
 - **Redirect URLs Whitelist**:
-  - `http://localhost:3000/auth/callback`
-  - `http://localhost:3000/verify-email`
-  - `http://localhost:3000/forgot-password`
-  - `http://localhost:3000/admin`
-  - `http://localhost:3000/employee/dashboard`
+  - `http://localhost:3000`
 - **Email Provider Settings**:
   - `Enable Email provider`: Enabled
   - `Confirm email`: Enabled
   - `Secure email change`: Enabled
   - `Mailer Autoconfirm`: Disabled (production mode)
 - **Email Templates**:
-  - **Confirm signup**: Updated to include both the 6-digit OTP code (`{{ .Token }}`) and direct confirmation link (`<a href="{{ .ConfirmationURL }}">Confirm Email</a>`).
-  - **Reset Password**: Updated to include both the 6-digit recovery code (`{{ .Token }}`) and direct reset link (`<a href="{{ .ConfirmationURL }}">Reset Password</a>`).
+  - **Confirm signup**: Updated to include **only** the 6-digit OTP code (`{{ .Token }}`). The `{{ .ConfirmationURL }}` must be removed.
+  - **Reset Password**: Updated to include **only** the 6-digit recovery code (`{{ .Token }}`). The `{{ .ConfirmationURL }}` must be removed.
 
 ### B. Route & Component Architecture
-1. **`app/auth/callback/route.ts`**:
-   - Accepts `code` query parameter and exchanges for session via `supabase.auth.exchangeCodeForSession(code)`.
-   - Fetches user record and queries `profiles.role` to determine destination:
-     - `admin` -> `/admin`
-     - `employee` -> `/employee/dashboard`
-     - Fallback / error -> `/login?error=auth_callback_failed`
-2. **`app/login/page.tsx`**:
+1. **`app/login/page.tsx`**:
    - Enhances error handling for `signInWithPassword`: detects `Email not confirmed` and presents user-friendly alert with direct link to verify email.
-   - Preserves admin registration with `emailRedirectTo: ${origin}/auth/callback`.
-3. **`app/verify-email/page.tsx`**:
+   - Preserves admin registration with `emailRedirectTo` omitted since verification is exclusively OTP.
+2. **`app/verify-email/page.tsx`**:
    - Validates 6-digit OTP via `supabase.auth.verifyOtp({ email, token, type: 'signup' })`.
    - On success, checks role and routes to `/admin` or `/employee/dashboard`.
    - Resend button with 60s cooldown calling `supabase.auth.resend({ type: 'signup', email })`.
-4. **`app/forgot-password/page.tsx`**:
-   - Step 1: `supabase.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/auth/callback?next=/forgot-password` })`.
+3. **`app/forgot-password/page.tsx`**:
+   - Step 1: `supabase.auth.resetPasswordForEmail(email)`.
    - Step 2: `supabase.auth.verifyOtp({ email, token, type: 'recovery' })`.
    - Step 3: `supabase.auth.updateUser({ password })`.
    - Step 4: Success confirmation screen and redirect to `/login`.
