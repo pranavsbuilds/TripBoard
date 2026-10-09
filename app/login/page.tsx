@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/AuthContext';
-import { sanitizeRedirect } from '@/lib/session';
+
 
 function LoginContent() {
   const router = useRouter();
@@ -23,6 +23,7 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState('');
 
   // Register State (Admins only)
   const [regFullName, setRegFullName] = useState('');
@@ -65,6 +66,7 @@ function LoginContent() {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setUnconfirmedEmail('');
 
     if (!role) {
       setError('Please select your role (Admin or Employee).');
@@ -82,6 +84,12 @@ function LoginContent() {
       if (signInError) {
         if (signInError.status === 429) {
           setError('Too many attempts. Please wait a moment and try again.');
+        } else if (
+          signInError.message?.toLowerCase().includes('email not confirmed') ||
+          signInError.message?.toLowerCase().includes('email_not_confirmed')
+        ) {
+          // Surface dedicated verification prompt instead of generic error
+          setUnconfirmedEmail(email.trim().toLowerCase());
         } else {
           setError('Invalid email or password.');
         }
@@ -275,6 +283,39 @@ function LoginContent() {
               </div>
             )}
 
+            {/* Unconfirmed Email Banner */}
+            {unconfirmedEmail && (
+              <div className="mb-5 p-4 bg-amber-50 border border-amber-300 text-amber-800 rounded-lg text-sm">
+                <p className="font-semibold mb-1">📧 Email not verified</p>
+                <p className="mb-3">
+                  Your account email <strong>{unconfirmedEmail}</strong> has not been verified yet. Please check your inbox for the verification email.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Link
+                    href={`/verify-email?email=${encodeURIComponent(unconfirmedEmail)}`}
+                    className="flex-1 text-center px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg text-xs transition-colors"
+                  >
+                    Enter Verification Code
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await supabase.auth.resend({
+                        type: 'signup',
+                        email: unconfirmedEmail,
+                        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+                      });
+                      setError('Verification email resent. Please check your inbox.');
+                      setUnconfirmedEmail('');
+                    }}
+                    className="flex-1 text-center px-3 py-2 bg-white border border-amber-400 hover:bg-amber-50 text-amber-700 font-semibold rounded-lg text-xs transition-colors"
+                  >
+                    Resend Verification Email
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Switch Tabs: Sign In vs Admin Sign Up */}
             <div className="flex border-b border-slate-200 mb-6 text-sm font-bold">
               <button
@@ -282,6 +323,7 @@ function LoginContent() {
                 onClick={() => {
                   setActiveTab('login');
                   setError('');
+                  setUnconfirmedEmail('');
                 }}
                 className={`flex-1 pb-2.5 transition-colors ${
                   activeTab === 'login'

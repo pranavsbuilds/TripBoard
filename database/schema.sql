@@ -161,6 +161,14 @@ returns boolean language sql stable security definer set search_path = public as
   );
 $$;
 
+-- Returns set of trip_ids assigned to current authenticated employee (bypasses RLS recursion)
+create or replace function public.get_my_assigned_trip_ids()
+returns setof uuid language sql stable security definer set search_path = public as $$
+  select trip_id from public.trip_assignments
+  where employee_id = (select id from public.employees where user_id = auth.uid() limit 1);
+$$;
+
+
 -- ==============================================================================
 -- 10. ENABLE ROW LEVEL SECURITY ON ALL TABLES
 -- ==============================================================================
@@ -219,10 +227,7 @@ create policy "trips_select_policy"
   on public.trips for select
   using (
     (public.is_admin() and company_id = public.get_current_company_id())
-    or id in (
-      select trip_id from public.trip_assignments
-      where employee_id = public.get_current_employee_id()
-    )
+    or id in (select public.get_my_assigned_trip_ids())
   );
 
 drop policy if exists "trips_admin_crud" on public.trips;
@@ -236,16 +241,20 @@ drop policy if exists "assignments_select_policy" on public.trip_assignments;
 create policy "assignments_select_policy"
   on public.trip_assignments for select
   using (
-    (public.is_admin() and trip_id in (select id from public.trips where company_id = public.get_current_company_id()))
+    (public.is_admin() and employee_id in (select id from public.employees where company_id = public.get_current_company_id()))
     or employee_id = public.get_current_employee_id()
-    or public.is_trip_coordinator(trip_id)
+    or trip_id in (select public.get_my_assigned_trip_ids())
   );
 
 drop policy if exists "assignments_admin_crud" on public.trip_assignments;
 create policy "assignments_admin_crud"
   on public.trip_assignments for all
-  using (public.is_admin() and trip_id in (select id from public.trips where company_id = public.get_current_company_id()))
-  with check (public.is_admin() and trip_id in (select id from public.trips where company_id = public.get_current_company_id()));
+  using (
+    public.is_admin() and employee_id in (select id from public.employees where company_id = public.get_current_company_id())
+  )
+  with check (
+    public.is_admin() and employee_id in (select id from public.employees where company_id = public.get_current_company_id())
+  );
 
 -- DOCUMENTS
 drop policy if exists "documents_select_policy" on public.documents;
