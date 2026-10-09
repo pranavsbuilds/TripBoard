@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripBoard - Login Preview (login.html UI with Auth Logic)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-dark": "#071D3A",
+                        "primary-blue": "#172B4D",
+                        "brand-blue": "#2E5BFF",
+                        "bg-ice": "#EAF5FC",
+                        "accent-gold": "#D4AF37",
+                        "accent-gold-hover": "#A98717",
+                        "gold-btn": "#C9A227",
+                        "gold-btn-hover": "#A98717",
+                        "gold-light": "#F4D675",
+                        "status-green": "#2ECC71",
+                        "status-orange": "#F39C12",
+                        "footer-text": "#B8C9DA",
+                    },
+                    borderRadius: {
+                        "xl": "12px",
+                        "2xl": "16px",
+                    },
+                    boxShadow: {
+                        "card": "0 4px 20px rgba(0,0,0,0.08)",
+                        "nav": "0 4px 20px rgba(7,29,58,0.25)",
+                        "btn-gold": "0 4px 10px rgba(201,162,39,0.35)",
+                        "btn-gold-hover": "0 6px 15px rgba(201,162,39,0.50)",
+                    },
+                    fontFamily: {
+                        sans: ["Arial", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .login-container {
+            width: 100%;
+            max-width: 1050px;
+            display: flex;
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(11, 42, 85, 0.15);
+        }
+        .login-info {
+            width: 50%;
+            padding: 60px;
+            background: linear-gradient(145deg, #0B2A55, #1659A5);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-info::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            right: -100px;
+            bottom: -100px;
+        }
+        .login-box {
+            width: 50%;
+            padding: 55px 65px;
+            background-color: white;
+        }
+        .form-input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #D5E5F2;
+            border-radius: 7px;
+            font-size: 15px;
+            outline: none;
+            background-color: #F8FCFF;
+            color: #172B4D;
+            transition: 0.3s;
+        }
+        .form-input:focus {
+            border-color: #1659A5;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(93, 184, 232, 0.15);
+        }
+        .gold-button {
+            width: 100%;
+            margin-top: 8px;
+            padding: 14px;
+            border: none;
+            border-radius: 7px;
+            background: linear-gradient(135deg, #C9A227, #E0B82F);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(201, 162, 39, 0.30);
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .gold-button:hover {
+            background: #A98717;
+            transform: translateY(-2px);
+            box-shadow: 0 9px 20px rgba(201, 162, 39, 0.40);
+        }
+        @media (max-width: 850px) {
+            .login-container {
+                flex-direction: column;
+            }
+            .login-info, .login-box {
+                width: 100%;
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-bg-ice text-primary-blue font-sans m-0 min-h-screen flex flex-col justify-between">
+
+    <!-- NAVBAR (Matching login.html & shared-components-preview.html) -->
+    <header class="min-h-[110px] md:h-[125px] relative flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-3 md:py-0 gap-3 md:gap-0 bg-cover bg-right md:bg-center bg-no-repeat shadow-nav border-b border-slate-200" style="background-image: url('../Assets/bg2.png'); background-color: #0c3370;">
+        <a href="../index.html" class="relative z-10 flex items-center gap-3.5 group no-underline">
+            <img src="../Assets/logo_svg.svg" alt="TripBoard Logo" class="h-12 md:h-14 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-105">
+            <div class="flex flex-col">
+                <span class="text-white font-black text-2xl md:text-[27px] tracking-[2px] leading-none drop-shadow-md">TRIPBOARD</span>
+                <span class="text-sky-200/90 text-[10px] md:text-[11px] font-medium tracking-wider mt-1 leading-none drop-shadow-sm">Corporate Travel Management. Simplified.</span>
+            </div>
+        </a>
+
+        <nav class="relative z-10 flex items-center gap-6 md:gap-8">
+            <a href="../index.html" class="text-white text-sm md:text-[15px] font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] transition-all duration-200 hover:text-gold-light hover:-translate-y-0.5">Home</a>
+            <a href="../index.html#features" class="text-white text-sm md:text-[15px] font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] transition-all duration-200 hover:text-gold-light hover:-translate-y-0.5">Features</a>
+            <a href="../index.html#about" class="text-white text-sm md:text-[15px] font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] transition-all duration-200 hover:text-gold-light hover:-translate-y-0.5">About</a>
+        </nav>
+    </header>
+
+    <!-- MAIN SECTION: EXACT login.html 2-COLUMN LAYOUT -->
+    <main class="flex-1 flex items-center justify-center p-4 md:p-8 my-6">
+        <div class="login-container">
+            
+            <!-- LEFT INFO PANEL (Exact login.html aesthetic & content) -->
+            <div class="login-info flex flex-col justify-between">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3">Welcome to TripBoard</h1>
+                    <h2 class="text-xl md:text-2xl font-bold text-gold-light mb-6">Business Travel, Simplified.</h2>
+                    <p class="text-bg-ice/90 text-base leading-relaxed max-w-[420px]">
+                        Manage employees, business trips, travel documents and expenses from one centralized platform.
+                    </p>
+
+                    <div class="mt-8 space-y-4 text-sm md:text-base font-medium">
+                        <p class="flex items-center gap-2">✈ Plan your trips</p>
+                        <p class="flex items-center gap-2">👥 Manage employees</p>
+                        <p class="flex items-center gap-2">📄 Organize travel documents</p>
+                        <p class="flex items-center gap-2">💼 Manage business travel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT LOGIN BOX (Exact login.html style with hide/unhide password & forgot password) -->
+            <div class="login-box flex flex-col justify-center">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-[#0B2A55] text-center mb-2 tracking-wide">LOGIN</h2>
+                <p class="text-sm text-slate-500 text-center mb-6">Access your TripBoard account</p>
+
+                <!-- Auth tabs: Login vs Signup (Both using login.html styling) -->
+                <div class="flex border-b border-slate-200 mb-6 text-sm font-bold">
+                    <button type="button" onclick="switchMode('login')" id="tab-login" class="flex-1 pb-2.5 text-[#1659A5] border-b-2 border-[#1659A5]">
+                        Sign In
+                    </button>
+                    <button type="button" onclick="switchMode('register')" id="tab-register" class="flex-1 pb-2.5 text-slate-400 hover:text-[#1659A5] transition">
+                        Create Account
+                    </button>
+                </div>
+
+                <!-- 1. LOGIN FORM -->
+                <form id="form-login" class="space-y-4" onsubmit="event.preventDefault();">
+                    <!-- EMAIL -->
+                    <div>
+                        <label class="block text-sm font-bold text-[#0B2A55] mb-1.5">Email Address</label>
+                        <input
+                            type="email"
+                            id="login-email"
+                            placeholder="Enter your email"
+                            class="form-input"
+                            required
+                        >
+                    </div>
+
+                    <!-- PASSWORD (With Hide/Unhide Eye Toggle) -->
+                    <div>
+                        <label class="block text-sm font-bold text-[#0B2A55] mb-1.5">Password</label>
+                        <div class="relative">
+                            <input
+                                type="password"
+                                id="login-password"
+                                placeholder="Enter your password"
+                                class="form-input pr-11"
+                                required
+                            >
+                            <button
+                                type="button"
+                                onclick="togglePassword('login-password', 'login-eye')"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1659A5] cursor-pointer"
+                            >
+                                <svg id="login-eye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ROLE (From login.html) -->
+                    <div>
+                        <label class="block text-sm font-bold text-[#0B2A55] mb-1.5">Login As</label>
+                        <select id="login-role" class="form-input cursor-pointer" required>
+                            <option value="">Select your role</option>
+                            <option value="admin">Admin</option>
+                            <option value="employee">Employee</option>
+                        </select>
+                    </div>
+
+                    <!-- FORGOT PASSWORD LINK -->
+                    <div class="text-right">
+                        <a href="forgot-password-preview.html" class="text-xs font-semibold text-[#1659A5] hover:text-gold-btn transition-colors">
+                            Forgot password?
+                        </a>
+                    </div>
+
+                    <!-- LOGIN BUTTON (Gold from login.html) -->
+                    <button type="submit" class="gold-button">
+                        LOGIN
+                    </button>
+                </form>
+
+                <!-- 2. REGISTER FORM (Using identical login.html styling) -->
+                <form id="form-register" class="space-y-4 hidden" onsubmit="event.preventDefault();">
+                    <div>
+                        <label class="block text-sm font-bold text-[#0B2A55] mb-1.5">Full Name</label>
+                        <input
+                            type="text"
+                            placeholder="Enter your full name"
+                            class="form-input"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-[#0B2A55] mb-1.5">Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            class="form-input"
+                            required
+                        >
+                    </div>
+
+                    <!-- PASSWORD (With Hide/Unhide & Strength Bar) -->
+                    <div>
+                        <label class="block text-sm font-bold text-[#0B2A55] mb-1.5">Password</label>
+                        <div class="relative">
+                            <input
+                                type="password"
+                                id="reg-password"
+                                placeholder="Enter password (min 8 chars, 1 letter, 1 number)"
+                                class="form-input pr-11"
+                                oninput="updateStrength(this.value)"
+                                required
+                            >
+                            <button
+                                type="button"
+                                onclick="togglePassword('reg-password', 'reg-eye')"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1659A5] cursor-pointer"
+                            >
+                                <svg id="reg-eye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- 4-bar live strength meter in brand styling -->
+                        <div class="flex gap-1.5 mt-2">
+                            <div id="bar-1" class="flex-1 h-1.5 rounded-full bg-slate-200 transition-colors"></div>
+                            <div id="bar-2" class="flex-1 h-1.5 rounded-full bg-slate-200 transition-colors"></div>
+                            <div id="bar-3" class="flex-1 h-1.5 rounded-full bg-slate-200 transition-colors"></div>
+                            <div id="bar-4" class="flex-1 h-1.5 rounded-full bg-slate-200 transition-colors"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-[#0B2A55] mb-1.5">Confirm Password</label>
+                        <input
+                            type="password"
+                            placeholder="Re-enter your password"
+                            class="form-input"
+                            required
+                        >
+                    </div>
+
+                    <!-- REGISTER BUTTON (Admins only) -->
+                    <button type="submit" class="gold-button">
+                        CREATE ADMIN ACCOUNT
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <a href="../index.html" class="text-sm font-bold text-[#1659A5] hover:text-gold-btn transition-colors">
+                        ← Back to Home
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary-dark text-footer-text text-center py-5 px-4 text-sm mt-auto">
+        <p class="m-0">© 2026 TripBoard. All Rights Reserved.</p>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPT -->
+    <script>
+        function switchMode(mode) {
+            const formLogin = document.getElementById('form-login');
+            const formRegister = document.getElementById('form-register');
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+
+            if (mode === 'login') {
+                formLogin.classList.remove('hidden');
+                formRegister.classList.add('hidden');
+                tabLogin.className = 'flex-1 pb-2.5 text-[#1659A5] border-b-2 border-[#1659A5]';
+                tabRegister.className = 'flex-1 pb-2.5 text-slate-400 hover:text-[#1659A5] transition';
+            } else {
+                formLogin.classList.add('hidden');
+                formRegister.classList.remove('hidden');
+                tabRegister.className = 'flex-1 pb-2.5 text-[#1659A5] border-b-2 border-[#1659A5]';
+                tabLogin.className = 'flex-1 pb-2.5 text-slate-400 hover:text-[#1659A5] transition';
+            }
+        }
+
+        function togglePassword(inputId, eyeId) {
+            const input = document.getElementById(inputId);
+            const eye = document.getElementById(eyeId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />';
+            } else {
+                input.type = 'password';
+                eye.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+            }
+        }
+
+        function updateStrength(val) {
+            const b1 = document.getElementById('bar-1');
+            const b2 = document.getElementById('bar-2');
+            const b3 = document.getElementById('bar-3');
+            const b4 = document.getElementById('bar-4');
+            [b1, b2, b3, b4].forEach(b => b.className = 'flex-1 h-1.5 rounded-full bg-slate-200 transition-colors');
+
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Za-z]/.test(val) && /\d/.test(val)) score++;
+            if (val.length >= 10 && /[A-Z]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const colors = ['bg-red-400', 'bg-yellow-400', 'bg-blue-500', 'bg-emerald-500'];
+            const activeColor = colors[Math.max(0, score - 1)];
+
+            if (score >= 1) b1.className = 'flex-1 h-1.5 rounded-full ' + activeColor;
+            if (score >= 2) b2.className = 'flex-1 h-1.5 rounded-full ' + activeColor;
+            if (score >= 3) b3.className = 'flex-1 h-1.5 rounded-full ' + activeColor;
+            if (score >= 4) b4.className = 'flex-1 h-1.5 rounded-full ' + activeColor;
+        }
+    </script>
+
+</body>
+</html>

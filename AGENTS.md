@@ -8,7 +8,7 @@
    - No need to store `walkthrough.md` files.
 
 3. **UI / Frontend Development**
-   - Before creating or modifying frontend UI, generate or reference a preview .html file in/from the `DESIGNS` folder.
+   - Before creating or modifying frontend UI, generate or reference a preview .html file in/from the `docs/designs` folder.
    - This file is intended to act as a visual preview and reference for the intended design.
    - Do not write or change UI code until the preview .html file has been explicitly approved by the user.
    - The UI must match the reference .html file.
@@ -60,13 +60,10 @@
     - A command or instruction to "commit" strictly means creating a local commit (`git commit`).
     - Never execute `git push` unless the user explicitly instructs to push (e.g., "push", "commit and push").
 
-16. **Two-Developer Collaboration & Branch Workflow**
+16. **Solo Developer Workflow & Branching**
     - The `main` branch must remain stable and deployable.
-    - Active development must occur on feature branches: `feature/<dev-name>-<task-name>` (e.g., `feature/dev1-admin-trips`, `feature/dev2-employee-portal`).
-    - To prevent merge conflicts, developers should establish clear component ownership:
-      - Developer 1: Admin Dashboard, Trip Management, and Employee Administration.
-      - Developer 2: Employee Portal, Travel Documents, and Self-Service flows.
-    - Coordinate any shared layout or utility changes in chat before pushing to `main`.
+    - Active development occurs on dedicated feature branches: `feature/<task-name>` (e.g., `feature/auth-setup`, `feature/trip-crud`).
+    - A single developer owns all features end-to-end across Admin, Employee, and Shared portals.
 
 17. **Development Logs Protocol (`docs/logs/`)**
     - Maintain daily progress logs in `docs/logs/YYYY-MM-DD.md`.
@@ -74,7 +71,7 @@
       1. Work completed during the session.
       2. Files modified / created.
       3. Open blockers or pending decisions.
-      4. Handoff notes for the partner developer.
+      4. Next steps and pending tasks for the next working session.
 
 18. **Architecture Decision Records (`docs/decisions/`)**
     - Any major structural, architectural, or framework choice must be documented in `docs/decisions/ADR-XXX-<title>.md`.
