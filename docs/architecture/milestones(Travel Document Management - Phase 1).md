@@ -108,11 +108,11 @@
 | `components/ui/DocumentPreviewModal.tsx` | CREATE |
 | `app/admin/trips/[id]/page.tsx` | MODIFY |
 
-**Gate ✅:**
-- [ ] Admin clicks "View Document" on the trip details screen.
-- [ ] Minimal in-app modal opens and renders image or PDF without verbose inspection text or forcing browser download.
-- [ ] Signed URL generated is authenticated and time-bounded.
-- [ ] Closing the preview returns smoothly to the previous view.
+**Gate ✅ — ACHIEVED:**
+- [x] Admin clicks "View Document" on the trip details screen.
+- [x] Minimal in-app modal opens and renders image or PDF without verbose inspection text or forcing browser download.
+- [x] Signed URL generated is authenticated and time-bounded (3600 seconds).
+- [x] Closing the preview returns smoothly to the previous view.
 
 ---
 
@@ -145,8 +145,8 @@
 | 1 | Database Schema, Storage Bucket & Validation Helpers | ✅ Done | Gemini 3.1 Pro (High) | 1 | 1 |
 | 2 | Admin Trip Document Requirements Configuration | ✅ Done | Gemini 3.8 Flash (High) | 0 | 2 |
 | 3 | Employee Trip-Specific Uploads & Document Vault | ✅ Done | Gemini 3.8 Flash (High) | 3 | 2 |
-| 4 | Admin In-App Minimal Document Preview Modal | ⏳ Next | Gemini 3.7 Flash (High) | 1 | 1 |
-| 5 | Phase 1 Integration Testing & Build Verification | — | Gemini 3.8 Flash (High) | 0 | 1 |
+| 4 | Admin In-App Minimal Document Preview Modal | ✅ Done | Gemini 3.7 Flash (High) | 2 | 1 |
+| 5 | Phase 1 Integration Testing & Build Verification | ⏳ Next | Gemini 3.8 Flash (High) | 0 | 1 |
 
 ---
 
