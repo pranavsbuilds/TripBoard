@@ -1,5 +1,5 @@
 # Local / Untracked Packages
-Assets/
+/Assets/
 
 # Environment variables & secrets
 .env

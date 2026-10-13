@@ -35,27 +35,54 @@ export async function ensureAdminCompany(): Promise<{ companyId: string | null; 
     return { companyId: null, error: 'Unauthorized: No active session.' };
   }
 
-  const { data: profile } = await supabase
+  // Provision Admin client early to bypass RLS for role verification & company provisioning
+  let adminClient: ReturnType<typeof createAdminClient> | null = null;
+  try {
+    adminClient = createAdminClient();
+  } catch (clientErr) {
+    console.warn('[ensureAdminCompany] Admin client init note:', clientErr);
+  }
+
+  const dbClient = adminClient || supabase;
+
+  const { data: profile } = await dbClient
     .from('profiles')
     .select('id, full_name, email, role, company_id')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
-  if (!profile || profile.role !== 'admin') {
+  // Role verification: check both public.profiles and auth user_metadata
+  const metaRole = (user.user_metadata?.role as string | undefined)?.toLowerCase();
+  const profileRole = profile?.role?.toLowerCase();
+  const isAdmin = profileRole === 'admin' || metaRole === 'admin';
+
+  if (!isAdmin) {
     return { companyId: null, error: 'Forbidden: Admin privileges required.' };
   }
 
-  if (profile.company_id) {
+  // Self-heal: ensure public.profiles has role = 'admin' so RLS is_admin() succeeds
+  if (profileRole !== 'admin') {
+    const fullName = profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Admin';
+    const email = profile?.email || user.email || '';
+    await dbClient
+      .from('profiles')
+      .upsert({
+        id: user.id,
+        full_name: fullName,
+        email: email,
+        role: 'admin',
+        ...(profile?.company_id ? { company_id: profile.company_id } : {}),
+      }, { onConflict: 'id' });
+  }
+
+  if (profile?.company_id) {
     return { companyId: profile.company_id };
   }
 
-  // Provision new company using privileged Admin client
-  const adminClient = createAdminClient();
-  const rawDomain = profile.email?.split('@')[1] || 'enterprise.com';
-  const prefix = profile.email?.split('@')[0]?.replace(/[^a-z0-9]/gi, '') || 'org';
-  const companyName = `${profile.full_name || 'My'}'s Organization`;
+  const rawDomain = profile?.email?.split('@')[1] || user.email?.split('@')[1] || 'enterprise.com';
+  const prefix = profile?.email?.split('@')[0]?.replace(/[^a-z0-9]/gi, '') || user.email?.split('@')[0]?.replace(/[^a-z0-9]/gi, '') || 'org';
+  const companyName = `${profile?.full_name || user.user_metadata?.full_name || 'My'}'s Organization`;
 
-  // Public email providers or existing domains must have unique tenant slugs
   const publicProviders = [
     'gmail.com',
     'yahoo.com',
@@ -70,7 +97,7 @@ export async function ensureAdminCompany(): Promise<{ companyId: string | null; 
   let domain = rawDomain.toLowerCase();
 
   const isPublicProvider = publicProviders.includes(domain);
-  const { data: existingDomain } = await adminClient
+  const { data: existingDomain } = await dbClient
     .from('companies')
     .select('id')
     .eq('domain', domain)
@@ -80,7 +107,7 @@ export async function ensureAdminCompany(): Promise<{ companyId: string | null; 
     domain = `${prefix}-${user.id.slice(0, 6)}.${domain}`;
   }
 
-  const { data: newCompany, error: compErr } = await adminClient
+  let { data: newCompany, error: compErr } = await dbClient
     .from('companies')
     .insert({
       name: companyName,
@@ -90,15 +117,37 @@ export async function ensureAdminCompany(): Promise<{ companyId: string | null; 
     .single();
 
   if (compErr || !newCompany) {
-    console.error('[ensureAdminCompany] Company creation failed:', compErr);
-    return { companyId: null, error: 'Failed to provision organization workspace.' };
+    console.warn('[ensureAdminCompany] Primary company insert failed, trying unique fallback:', compErr?.message);
+    const fallbackDomain = `${prefix}-${Date.now().toString().slice(-6)}.${rawDomain.toLowerCase()}`;
+    const { data: retryComp, error: retryErr } = await dbClient
+      .from('companies')
+      .insert({
+        name: companyName,
+        domain: fallbackDomain,
+      })
+      .select('id')
+      .single();
+
+    if (retryErr || !retryComp) {
+      console.error('[ensureAdminCompany] Fallback company creation failed:', retryErr);
+      return { companyId: null, error: 'Failed to provision organization workspace.' };
+    }
+    newCompany = retryComp;
   }
 
-  // Link to profile
-  const { error: profErr } = await adminClient
+  // Link to profile (upsert to handle cases where initial trigger row was delayed)
+  const fullName = profile?.full_name || user.user_metadata?.full_name || 'Admin';
+  const email = profile?.email || user.email || '';
+
+  const { error: profErr } = await dbClient
     .from('profiles')
-    .update({ company_id: newCompany.id })
-    .eq('id', user.id);
+    .upsert({
+      id: user.id,
+      full_name: fullName,
+      email: email,
+      role: 'admin',
+      company_id: newCompany.id,
+    });
 
   if (profErr) {
     console.error('[ensureAdminCompany] Profile update failed:', profErr);
@@ -244,4 +293,95 @@ export async function addAndInviteEmployee(input: AddEmployeeInput): Promise<Add
     inviteSent,
     adminName,
   };
+}
+
+export interface DeleteEmployeeResult {
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Permanently deletes an employee from:
+ * 1. Supabase auth.users (revokes login access, cascades to public.profiles)
+ * 2. public.employees (cascades to trip_assignments and documents)
+ * Verifies multi-tenant ownership before any deletion.
+ */
+export async function deleteEmployeeAction(employeeId: string): Promise<DeleteEmployeeResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Unauthorized: No active session.' };
+  }
+
+  const { companyId, error: compError } = await ensureAdminCompany();
+  if (compError || !companyId) {
+    return { success: false, error: compError || 'Could not identify your organization.' };
+  }
+
+  // 1. Fetch the employee — must belong to this admin's company
+  const { data: employee, error: fetchErr } = await supabase
+    .from('employees')
+    .select('id, user_id, email, full_name')
+    .eq('id', employeeId)
+    .eq('company_id', companyId)
+    .maybeSingle();
+
+  if (fetchErr) {
+    console.error('[deleteEmployeeAction] Fetch failed:', fetchErr.message);
+    return { success: false, error: 'Failed to retrieve employee record.' };
+  }
+  if (!employee) {
+    return { success: false, error: 'Employee not found or does not belong to your company.' };
+  }
+
+  let adminClient: ReturnType<typeof createAdminClient> | null = null;
+  try {
+    adminClient = createAdminClient();
+  } catch (clientErr) {
+    console.warn('[deleteEmployeeAction] Admin client init note:', clientErr);
+  }
+
+  // 2. Delete the auth user — this cascades to public.profiles and nulls employees.user_id
+  let authUserId = employee.user_id;
+
+  // If user_id is not linked, fall back to email lookup
+  if (!authUserId && adminClient && employee.email) {
+    try {
+      const { data: listData } = await adminClient.auth.admin.listUsers({ perPage: 1000 });
+      const foundUser = listData?.users?.find(
+        (u) => u.email?.toLowerCase() === employee.email.toLowerCase()
+      );
+      if (foundUser) {
+        authUserId = foundUser.id;
+      }
+    } catch (lookupErr) {
+      console.warn('[deleteEmployeeAction] Auth user lookup failed:', lookupErr);
+    }
+  }
+
+  if (authUserId && adminClient) {
+    const { error: authDeleteErr } = await adminClient.auth.admin.deleteUser(authUserId);
+    if (authDeleteErr) {
+      // Non-fatal — user may have already been removed; log and continue with employee delete
+      console.warn('[deleteEmployeeAction] Auth user deletion note:', authDeleteErr.message);
+    }
+  }
+
+  // 3. Delete the employee record — cascades trip_assignments and documents automatically
+  const dbClient = adminClient || supabase;
+  const { error: empDeleteErr } = await dbClient
+    .from('employees')
+    .delete()
+    .eq('id', employeeId)
+    .eq('company_id', companyId);
+
+  if (empDeleteErr) {
+    console.error('[deleteEmployeeAction] Employee delete failed:', empDeleteErr.message);
+    return { success: false, error: empDeleteErr.message || 'Failed to delete employee record.' };
+  }
+
+  return { success: true };
 }

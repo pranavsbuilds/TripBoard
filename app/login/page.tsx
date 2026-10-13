@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/AuthContext';
+import { validatePasswordStrength } from '@/lib/security';
 
 
 function LoginContent() {
@@ -32,6 +33,13 @@ function LoginContent() {
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
   const [showRegPassword, setShowRegPassword] = useState(false);
   const [strengthScore, setStrengthScore] = useState(0);
+
+  // Open register tab if URL has ?tab=register
+  useEffect(() => {
+    if (searchParams.get('tab') === 'register') {
+      setActiveTab('register');
+    }
+  }, [searchParams]);
 
   // If already authenticated, redirect to role dashboard
   useEffect(() => {
@@ -97,14 +105,17 @@ function LoginContent() {
         return;
       }
 
-      // Check user profile role in public.profiles
+      // Check user profile role in public.profiles and auth metadata
       const { data: userProfile } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', data.user.id)
         .maybeSingle();
 
-      const userActualRole = userProfile?.role || 'employee';
+      const userMetaRole = (data.user.user_metadata?.role as string | undefined)?.toLowerCase();
+      const profileRole = userProfile?.role?.toLowerCase();
+      const isUserAdmin = profileRole === 'admin' || userMetaRole === 'admin';
+      const userActualRole = isUserAdmin ? 'admin' : (profileRole || 'employee');
 
       // Verify that user selected the correct role
       if (userActualRole !== role) {
@@ -112,6 +123,14 @@ function LoginContent() {
         await supabase.auth.signOut();
         setLoading(false);
         return;
+      }
+
+      // Self-heal profile in database if out of sync
+      if (isUserAdmin && profileRole !== 'admin') {
+        await supabase
+          .from('profiles')
+          .update({ role: 'admin' })
+          .eq('id', data.user.id);
       }
 
       // Route to respective dashboard
@@ -136,10 +155,13 @@ function LoginContent() {
       setError('Please enter your full name.');
       return;
     }
-    if (regPassword.length < 8) {
-      setError('Password must be at least 8 characters long.');
+
+    const pwCheck = validatePasswordStrength(regPassword);
+    if (!pwCheck.valid) {
+      setError(pwCheck.message);
       return;
     }
+
     if (regPassword !== regConfirmPassword) {
       setError('Passwords do not match.');
       return;
@@ -170,9 +192,26 @@ function LoginContent() {
         return;
       }
 
+      // Supabase returns user with empty identities when email already exists and email confirmation is ON
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        setError('An account with this email already exists. Please log in.');
+        setLoading(false);
+        return;
+      }
+
       if (data.user && !data.session) {
         router.push(`/verify-email?email=${encodeURIComponent(regEmail.trim().toLowerCase())}`);
       } else {
+        if (data.user) {
+          await supabase
+            .from('profiles')
+            .upsert({
+              id: data.user.id,
+              full_name: regFullName.trim(),
+              email: regEmail.trim().toLowerCase(),
+              role: 'admin',
+            }, { onConflict: 'id' });
+        }
         router.replace('/admin');
       }
     } catch (err) {
@@ -302,7 +341,6 @@ function LoginContent() {
                       await supabase.auth.resend({
                         type: 'signup',
                         email: unconfirmedEmail,
-                        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
                       });
                       setError('Verification email resent. Please check your inbox.');
                       setUnconfirmedEmail('');

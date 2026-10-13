@@ -60,10 +60,15 @@ export async function updateSession(request: NextRequest) {
     return noCache(NextResponse.redirect(url));
   }
 
-  // Authenticated on /login or /register → route by role
+  // Authenticated on /login or /register → route directly by role
   if (user && (pathname === '/login' || pathname === '/register')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
     const url = request.nextUrl.clone();
-    url.pathname = '/dashboard';
+    url.pathname = profile?.role === 'admin' ? '/admin' : '/employee/dashboard';
     return noCache(NextResponse.redirect(url));
   }
 

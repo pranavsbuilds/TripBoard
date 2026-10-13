@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Preview - Employee Deletion & Admin Register Refinement</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-dark": "#071D3A",
+                        "primary-blue": "#172B4D",
+                        "brand-blue": "#2E5BFF",
+                        "bg-ice": "#EAF5FC",
+                        "accent-gold": "#D4AF37",
+                        "gold-btn": "#C9A227",
+                        "gold-btn-hover": "#A98717",
+                        "gold-light": "#F4D675",
+                        "status-green": "#2ECC71",
+                        "status-orange": "#F39C12",
+                    },
+                    borderRadius: {
+                        "xl": "12px",
+                        "2xl": "16px",
+                    },
+                    boxShadow: {
+                        "card": "0 4px 20px rgba(0,0,0,0.08)",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg-ice text-primary-blue font-sans p-6 md:p-10 space-y-12 min-h-screen">
+
+    <!-- Header Banner -->
+    <div class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-card border border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-blue bg-sky-50 px-3 py-1 rounded-full">
+                UI &amp; Design Preview
+            </span>
+            <h1 class="text-2xl font-black text-primary-dark mt-2">
+                Employee Deletion &amp; Admin Registration Refinements
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Visual specification for red dustbin icon, permanent deletion confirmation modal, and phone-free admin registration.
+            </p>
+        </div>
+        <div class="text-xs font-mono bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700">
+            docs/designs/employee-delete-and-admin-register-preview.html
+        </div>
+    </div>
+
+    <!-- Section 1: Employee Directory Card with Red Dustbin Icon -->
+    <section class="max-w-5xl mx-auto space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-primary-dark tracking-wide flex items-center gap-2">
+                <span>1. Employee Card with Red Dustbin Action</span>
+                <span class="text-xs font-normal text-slate-500">(hoverable &amp; accessible)</span>
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Sample Employee Card 1 -->
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 space-y-4 hover:border-brand-blue/30 transition relative">
+                <div class="flex items-center justify-between">
+                    <div class="w-12 h-12 rounded-full bg-primary-dark text-gold-light font-bold flex items-center justify-center text-sm">
+                        RS
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">
+                            ACTIVE
+                        </span>
+                        <!-- RED DUSTBIN BUTTON -->
+                        <button
+                            type="button"
+                            onclick="openDeleteModal('Rahul Sharma', 'EMP-1002', 'IT')"
+                            title="Delete Employee"
+                            class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 flex items-center justify-center transition border border-red-100 shadow-sm group"
+                        >
+                            <svg class="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-bold text-primary-dark">Rahul Sharma</h3>
+                    <p class="text-xs text-slate-500 mt-0.5 font-mono">
+                        EMP-1002 · Senior DevOps Lead
+                    </p>
+                </div>
+
+                <div class="text-xs text-slate-600 space-y-2 border-t border-slate-100 pt-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">✉</span>
+                        <span class="truncate">rahul.sharma@enterprise.com</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">📞</span>
+                        <span>+91 98765 43210</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">🏢</span>
+                        <span>IT &amp; Cloud Infra</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Employee Card 2 -->
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-slate-100 space-y-4 hover:border-brand-blue/30 transition relative">
+                <div class="flex items-center justify-between">
+                    <div class="w-12 h-12 rounded-full bg-primary-dark text-gold-light font-bold flex items-center justify-center text-sm">
+                        AP
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-800">
+                            ON TRIP
+                        </span>
+                        <!-- RED DUSTBIN BUTTON -->
+                        <button
+                            type="button"
+                            onclick="openDeleteModal('Ananya Patel', 'EMP-1008', 'Product')"
+                            title="Delete Employee"
+                            class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 flex items-center justify-center transition border border-red-100 shadow-sm group"
+                        >
+                            <svg class="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-bold text-primary-dark">Ananya Patel</h3>
+                    <p class="text-xs text-slate-500 mt-0.5 font-mono">
+                        EMP-1008 · Product Designer
+                    </p>
+                </div>
+
+                <div class="text-xs text-slate-600 space-y-2 border-t border-slate-100 pt-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">✉</span>
+                        <span class="truncate">ananya.patel@enterprise.com</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">📞</span>
+                        <span>+91 91234 56789</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">🏢</span>
+                        <span>Design &amp; UX</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Permanent Deletion Confirmation Modal Preview -->
+    <section class="max-w-5xl mx-auto space-y-4">
+        <h2 class="text-lg font-bold text-primary-dark tracking-wide">
+            2. Confirmation Popup Modal (Interactive Preview)
+        </h2>
+        <p class="text-xs text-slate-500">
+            Clicking any dustbin icon above triggers this modal. Click below to toggle the modal on/off.
+        </p>
+
+        <!-- Static Inline Preview of the Modal for review -->
+        <div class="bg-white rounded-2xl p-6 md:p-8 max-w-lg mx-auto shadow-card border-2 border-red-200 space-y-6">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-primary-dark">
+                        Delete Employee Permanently?
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                        Are you sure you want to delete <strong class="text-primary-dark">Rahul Sharma (EMP-1002)</strong>?
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-red-50/70 border border-red-100 space-y-1.5 text-xs text-red-800">
+                <div class="font-bold flex items-center gap-1.5">
+                    <span>⚠️</span> Permanent Deletion Impact:
+                </div>
+                <ul class="list-disc list-inside space-y-1 text-slate-600 pl-1">
+                    <li>Deleted as a user from <strong>Supabase Auth</strong> (cannot log in)</li>
+                    <li>Removed from <strong>Company Directory</strong> &amp; Employee profiles</li>
+                    <li>Unassigned from trips and associated documents removed</li>
+                    <li><strong class="text-red-700">This action cannot be undone.</strong></li>
+                </ul>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <button
+                    type="button"
+                    class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition flex items-center gap-1.5"
+                >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span>Yes, Delete Employee</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Admin Registration Form (Phone Number Removed) -->
+    <section class="max-w-5xl mx-auto space-y-4">
+        <h2 class="text-lg font-bold text-primary-dark tracking-wide">
+            3. Refined Admin Registration Form (Phone Input Removed)
+        </h2>
+        <p class="text-xs text-slate-500">
+            Admins register with Full Name, Email, Password (with strength meter), and Confirm Password only.
+        </p>
+
+        <div class="bg-white rounded-2xl p-8 max-w-md mx-auto shadow-card border border-slate-100 space-y-5">
+            <div class="text-center pb-2 border-b border-slate-100">
+                <h3 class="text-base font-black text-primary-dark">Admin Registration</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Provision enterprise administrator workspace</p>
+            </div>
+
+            <form class="space-y-4" onsubmit="event.preventDefault()">
+                <!-- Full Name -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                        Full Name <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        value="Vikram Singhania"
+                        class="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none font-medium text-primary-dark"
+                        readonly
+                    />
+                </div>
+
+                <!-- Work Email Address -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                        Work Email Address <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="email"
+                        value="vikram@singhaniagroup.in"
+                        class="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none font-medium text-primary-dark"
+                        readonly
+                    />
+                </div>
+
+                <!-- (PHONE INPUT HAS BEEN COMPLETELY REMOVED HERE) -->
+
+                <!-- Password with Strength Meter -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                        Password <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="password"
+                        value="AdminStrong@2026"
+                        class="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none font-medium text-primary-dark"
+                        readonly
+                    />
+                    <!-- Strength meter bars -->
+                    <div class="flex gap-1.5 mt-2">
+                        <div class="flex-1 h-1.5 rounded-full bg-emerald-500"></div>
+                        <div class="flex-1 h-1.5 rounded-full bg-emerald-500"></div>
+                        <div class="flex-1 h-1.5 rounded-full bg-emerald-500"></div>
+                        <div class="flex-1 h-1.5 rounded-full bg-emerald-500"></div>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                        Confirm Password <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="password"
+                        value="AdminStrong@2026"
+                        class="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] rounded-xl text-sm outline-none font-medium text-primary-dark"
+                        readonly
+                    />
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                    type="button"
+                    class="w-full py-3 bg-gold-btn hover:bg-gold-btn-hover text-white font-bold text-sm rounded-xl shadow-btn-gold transition"
+                >
+                    CREATE ADMIN ACCOUNT →
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Interactive Modal Container (Hidden by default, shown via click) -->
+    <div id="liveModalBackdrop" class="fixed inset-0 bg-primary-dark/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl border border-slate-100 space-y-6 animate-scale">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-primary-dark">Delete Employee Permanently?</h3>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Are you sure you want to delete <span id="modalEmpName" class="font-bold text-primary-dark">Employee</span> (<span id="modalEmpCode" class="font-mono">EMP-00</span>)?
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-red-50 border border-red-100 text-xs text-red-700">
+                This will delete their user account, remove all directory entries, and unassign them from scheduled trips.
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+                <button
+                    type="button"
+                    onclick="closeDeleteModal()"
+                    class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    onclick="alert('Confirmed: This employee will be completely deleted from auth and company records.'); closeDeleteModal();"
+                    class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-md transition"
+                >
+                    Yes, Delete Employee
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(name, code, dept) {
+            document.getElementById('modalEmpName').textContent = name;
+            document.getElementById('modalEmpCode').textContent = code;
+            document.getElementById('liveModalBackdrop').classList.remove('hidden');
+        }
+        function closeDeleteModal() {
+            document.getElementById('liveModalBackdrop').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

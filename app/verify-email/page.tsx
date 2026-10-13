@@ -157,9 +157,6 @@ function VerifyEmailContent() {
       const { error: resendError } = await supabase.auth.resend({
         type: 'signup',
         email: email.trim().toLowerCase(),
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
       });
 
       if (resendError) {

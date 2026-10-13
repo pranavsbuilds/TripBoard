@@ -8,7 +8,7 @@ export default function RegisterRedirect() {
 
   useEffect(() => {
     // Lead directly to login page with register tab active
-    router.replace('/login');
+    router.replace('/login?tab=register');
   }, [router]);
 
   return (

@@ -3,6 +3,13 @@ import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { Plane, LogOut, User, ShieldCheck } from 'lucide-react';
 
+async function signOutAction() {
+  'use server';
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect('/login');
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -48,7 +55,7 @@ export default async function DashboardPage() {
             <User className="w-4 h-4" />
             Go to {role === 'admin' ? 'Admin Suite' : 'My Portal'}
           </Link>
-          <form action="/auth/signout" method="POST">
+          <form action={signOutAction}>
             <button
               type="submit"
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-primary-blue font-semibold rounded-xl transition-colors"
@@ -60,7 +67,7 @@ export default async function DashboardPage() {
         </div>
 
         <p className="text-xs text-primary-blue/50">
-          Milestone 3 ✅ — Auth integration verified. Session cookie active.
+          Auth integration verified. Session cookie active.
         </p>
       </div>
     </div>

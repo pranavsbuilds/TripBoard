@@ -4,11 +4,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { useAuth } from '@/components/AuthContext';
 import { IndiaDatePicker } from '@/components/ui/IndiaDatePicker';
 import { RupeeInput } from '@/components/ui/RupeeInput';
 import { toISODate, formatToINR } from '@/lib/format';
-import { ArrowLeft, Users, Star, Plus } from 'lucide-react';
+import { createTripAction } from '@/app/admin/trips/actions';
+import { ArrowLeft, Star, Plus } from 'lucide-react';
 
 interface Employee {
   id: string;
@@ -21,7 +21,6 @@ interface Employee {
 export default function CreateTripPage() {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
-  const { user, profile } = useAuth();
 
   const [destination, setDestination] = useState('');
   const [purpose, setPurpose] = useState('Business Conference');
@@ -108,78 +107,25 @@ export default function CreateTripPage() {
 
     setLoading(true);
 
-    try {
-      let companyId = profile?.company_id;
+    const result = await createTripAction({
+      destination,
+      purpose,
+      startDate: toISODate(startDate),
+      endDate: toISODate(endDate),
+      groupBudget,
+      individualBudget,
+      totalBudget: totalApprovedBudget,
+      travelerIds: selectedTravelerIds,
+      coordinatorId,
+    });
 
-      if (!companyId && user) {
-        const { data: comp } = await supabase
-          .from('companies')
-          .select('id')
-          .limit(1)
-          .maybeSingle();
-
-        if (comp) {
-          companyId = comp.id;
-        } else {
-          const { data: newComp } = await supabase
-            .from('companies')
-            .insert({ name: 'My Enterprise', domain: 'company.com' })
-            .select('id')
-            .single();
-          companyId = newComp?.id;
-        }
-      }
-
-      if (!companyId || !user) {
-        setError('Missing company association for this admin profile.');
-        setLoading(false);
-        return;
-      }
-
-      const isoStart = toISODate(startDate);
-      const isoEnd = toISODate(endDate);
-
-      // 1. Insert into public.trips with separate group and individual budgets
-      const { data: trip, error: tripErr } = await supabase
-        .from('trips')
-        .insert({
-          company_id: companyId,
-          title: `${destination.split(',')[0]} ${purpose}`,
-          destination: destination.trim(),
-          country: destination.includes(',') ? destination.split(',').pop()?.trim() || 'India' : 'India',
-          purpose: purpose.trim(),
-          start_date: isoStart,
-          end_date: isoEnd,
-          budget_inr: totalApprovedBudget,
-          group_budget_inr: groupBudget,
-          individual_budget_inr: individualBudget,
-          status: 'upcoming',
-          coordinator_id: coordinatorId,
-          created_by: user.id,
-        })
-        .select('id')
-        .single();
-
-      if (tripErr) throw tripErr;
-
-      // 2. Insert assignments for all selected travelers
-      const assignments = selectedTravelerIds.map((empId) => ({
-        company_id: companyId,
-        trip_id: trip.id,
-        employee_id: empId,
-        role: empId === coordinatorId ? 'coordinator' : 'traveler',
-        status: 'confirmed',
-      }));
-
-      const { error: assignErr } = await supabase.from('trip_assignments').insert(assignments);
-      if (assignErr) throw assignErr;
-
-      router.push('/admin/trips');
-    } catch (err) {
-      console.error('[CreateTrip]', err instanceof Error ? err.message : String(err));
-      setError('Failed to create trip. Please try again.');
+    if (!result.success) {
+      setError(result.error || 'Failed to create trip. Please try again.');
       setLoading(false);
+      return;
     }
+
+    router.push('/admin/trips');
   };
 
   return (
@@ -289,12 +235,22 @@ export default function CreateTripPage() {
           {fetchingEmployees ? (
             <div className="text-center py-6 text-slate-400 text-xs">Loading employee roster...</div>
           ) : employees.length === 0 ? (
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-500 text-center">
-              No employees in directory.{' '}
-              <Link href="/admin/employees/add" className="text-brand-blue font-bold underline">
-                Add employees first
-              </Link>
-              .
+            <div className="p-6 rounded-2xl bg-amber-50/60 border border-amber-200 text-center space-y-3">
+              <div className="w-12 h-12 bg-amber-100 text-amber-800 rounded-xl mx-auto flex items-center justify-center font-bold text-xl">
+                👥
+              </div>
+              <h4 className="text-sm font-bold text-primary-dark">No Employees in Directory</h4>
+              <p className="text-xs text-slate-600 max-w-md mx-auto">
+                Trips require at least one traveler and a designated Trip Coordinator. Add team members to your corporate directory before scheduling trips.
+              </p>
+              <div className="pt-1">
+                <Link
+                  href="/admin/employees/add"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-blue hover:bg-primary-blue text-white font-bold text-xs rounded-xl shadow transition"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add New Employee
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
@@ -434,10 +390,14 @@ export default function CreateTripPage() {
           </Link>
           <button
             type="submit"
-            disabled={loading}
-            className="px-8 py-3 bg-gradient-to-r from-gold-btn to-[#E0B82F] hover:from-gold-btn-hover hover:to-gold-btn text-white font-bold text-sm rounded-xl shadow-btn-gold transition cursor-pointer disabled:opacity-50"
+            disabled={loading || (!fetchingEmployees && employees.length === 0)}
+            className="px-8 py-3 bg-gradient-to-r from-gold-btn to-[#E0B82F] hover:from-gold-btn-hover hover:to-gold-btn text-white font-bold text-sm rounded-xl shadow-btn-gold transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'CREATING TRIP...' : 'CREATE TRIP & ASSIGN ROLES'}
+            {loading
+              ? 'CREATING TRIP...'
+              : !fetchingEmployees && employees.length === 0
+              ? 'ADD EMPLOYEES TO CREATE TRIP'
+              : 'CREATE TRIP & ASSIGN ROLES'}
           </button>
         </div>
       </form>

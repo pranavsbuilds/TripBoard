@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { Plus, Search, Mail, Phone, Building, Briefcase } from 'lucide-react';
+import { Plus, Search, Mail, Phone, Building, Briefcase, Trash2, Loader2 } from 'lucide-react';
+import { deleteEmployeeAction } from '@/app/admin/employees/actions';
 
 interface Employee {
   id: string;
@@ -22,6 +23,10 @@ export default function EmployeesDirectoryPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'on_trip' | 'inactive'>('all');
+  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [actionError, setActionError] = useState('');
+  const [actionSuccess, setActionSuccess] = useState('');
 
   useEffect(() => {
     async function loadEmployees() {
@@ -64,6 +69,25 @@ export default function EmployeesDirectoryPage() {
       .toUpperCase();
   };
 
+  const handleConfirmDelete = async () => {
+    if (!employeeToDelete) return;
+    setDeleting(true);
+    setActionError('');
+
+    const result = await deleteEmployeeAction(employeeToDelete.id);
+    if (!result.success) {
+      setActionError(result.error || 'Failed to delete employee.');
+      setDeleting(false);
+      return;
+    }
+
+    setEmployees((prev) => prev.filter((e) => e.id !== employeeToDelete.id));
+    setDeleting(false);
+    setEmployeeToDelete(null);
+    setActionSuccess('Employee permanently deleted from authentication and company records.');
+    setTimeout(() => setActionSuccess(''), 4000);
+  };
+
   return (
     <div className="space-y-6">
       {/* Heading */}
@@ -83,6 +107,19 @@ export default function EmployeesDirectoryPage() {
           <Plus className="w-4 h-4" /> Add Employee
         </Link>
       </div>
+
+      {actionSuccess && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-bold flex items-center justify-between animate-fadeIn">
+          <span>{actionSuccess}</span>
+          <button
+            type="button"
+            onClick={() => setActionSuccess('')}
+            className="text-emerald-700 hover:text-emerald-900"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Search & Status Filters */}
       <div className="bg-white p-4 rounded-2xl shadow-card border border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
@@ -166,17 +203,30 @@ export default function EmployeesDirectoryPage() {
                 <div className="w-12 h-12 rounded-full bg-primary-dark text-gold-light font-bold flex items-center justify-center text-sm">
                   {getInitials(emp.full_name)}
                 </div>
-                <span
-                  className={`px-2.5 py-0.5 text-xs font-bold rounded-full ${
-                    emp.status === 'active'
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : emp.status === 'on_trip'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-slate-100 text-slate-600'
-                  }`}
-                >
-                  {emp.status === 'on_trip' ? 'On Trip' : emp.status.toUpperCase()}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-2.5 py-0.5 text-xs font-bold rounded-full ${
+                      emp.status === 'active'
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : emp.status === 'on_trip'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {emp.status === 'on_trip' ? 'On Trip' : emp.status.toUpperCase()}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActionError('');
+                      setEmployeeToDelete(emp);
+                    }}
+                    title="Delete Employee"
+                    className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 flex items-center justify-center transition border border-red-100 shadow-sm group"
+                  >
+                    <Trash2 className="w-4 h-4 transition-transform group-hover:scale-110" />
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -202,6 +252,76 @@ export default function EmployeesDirectoryPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Confirmation Popup Modal */}
+      {employeeToDelete && (
+        <div className="fixed inset-0 bg-primary-dark/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl border border-slate-100 space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-primary-dark">Delete Employee Permanently?</h3>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Are you sure you want to delete{' '}
+                  <strong className="text-primary-dark">{employeeToDelete.full_name}</strong> (
+                  <span className="font-mono">{employeeToDelete.employee_code}</span>)?
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-red-50/80 border border-red-100 space-y-1.5 text-xs text-red-800">
+              <div className="font-bold flex items-center gap-1.5">
+                <span>⚠️</span> Permanent Deletion Impact:
+              </div>
+              <ul className="list-disc list-inside space-y-1 text-slate-600 pl-1">
+                <li>Permanently deletes employee user credentials from authentication</li>
+                <li>Removes employee record from company travel directory</li>
+                <li>Unassigns from all scheduled trips and removes documents</li>
+              </ul>
+            </div>
+
+            {actionError && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium">
+                {actionError}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => {
+                  setEmployeeToDelete(null);
+                  setActionError('');
+                }}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleConfirmDelete}
+                className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 disabled:opacity-50"
+              >
+                {deleting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Yes, Delete Employee</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
