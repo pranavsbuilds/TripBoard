@@ -14,6 +14,7 @@ import {
   Receipt,
   Star,
   Plus,
+  FileText,
 } from 'lucide-react';
 
 export interface TripBooking {
@@ -45,6 +46,8 @@ export interface EmployeeTrip {
   status: string;
   coordinator_id?: string;
   coordinator_name?: string;
+  requiredDocsCount?: number;
+  uploadedDocsCount?: number;
   travelers?: {
     id: string;
     name: string;
@@ -122,6 +125,26 @@ export function EmployeeTripCard({
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Dynamic Per-Trip Document Completion Badge */}
+            {typeof trip.requiredDocsCount === 'number' && trip.requiredDocsCount > 0 && (
+              <span
+                className={`px-2.5 py-1 text-xs font-bold font-mono rounded border flex items-center gap-1.5 ${
+                  (trip.uploadedDocsCount || 0) >= trip.requiredDocsCount
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                    : 'bg-amber-100 text-amber-800 border-amber-200'
+                }`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    (trip.uploadedDocsCount || 0) >= trip.requiredDocsCount
+                      ? 'bg-emerald-500'
+                      : 'bg-amber-500'
+                  }`}
+                />
+                {trip.uploadedDocsCount || 0}/{trip.requiredDocsCount} Docs Uploaded
+              </span>
+            )}
+
             <span
               className={`px-3 py-1 text-xs font-bold font-mono rounded ${
                 trip.status === 'in_progress'
@@ -206,14 +229,27 @@ export function EmployeeTripCard({
                 {trip.coordinator_name || 'Designated Lead'}
               </p>
             </div>
-            {isCoordinator && (
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
               <Link
-                href={`/employee/trips/${trip.id}/coordinator`}
-                className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shadow-sm self-start sm:self-auto"
+                href={`/employee/trips/${trip.id}`}
+                className="px-3.5 py-1.5 bg-brand-blue hover:bg-primary-blue text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition"
               >
-                Open Coordinator Hub →
+                <FileText className="w-3.5 h-3.5" />
+                Travel Documents
+                {typeof trip.requiredDocsCount === 'number' && trip.requiredDocsCount > 0
+                  ? ` (${trip.uploadedDocsCount || 0}/${trip.requiredDocsCount})`
+                  : ''}{' '}
+                →
               </Link>
-            )}
+              {isCoordinator && (
+                <Link
+                  href={`/employee/trips/${trip.id}/coordinator`}
+                  className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shadow-sm"
+                >
+                  Open Coordinator Hub →
+                </Link>
+              )}
+            </div>
           </div>
 
           {/* Group Bookings (Handled by Coordinator) */}

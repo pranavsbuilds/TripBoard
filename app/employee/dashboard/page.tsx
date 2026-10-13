@@ -67,18 +67,33 @@ export default async function EmployeeDashboardPage() {
     }
   }
 
-  // Fetch document verification status
-  let docsCount = { total: 0, verified: 0 };
-  if (currentEmployeeId) {
-    const { data: docs } = await supabase
-      .from('documents')
-      .select('status')
-      .eq('employee_id', currentEmployeeId);
-      
-    if (docs) {
-      docsCount.total = docs.length;
-      docsCount.verified = docs.filter(d => d.status === 'verified').length;
-    }
+  // Fetch per-trip document requirements and employee uploaded docs
+  if (currentEmployeeId && trips.length > 0) {
+    const tripIds = trips.map((t) => t.id);
+    const [reqsRes, docsRes] = await Promise.all([
+      supabase
+        .from('trip_document_requirements')
+        .select('trip_id, document_type')
+        .in('trip_id', tripIds),
+      supabase
+        .from('documents')
+        .select('trip_id, document_type, status')
+        .eq('employee_id', currentEmployeeId)
+        .in('trip_id', tripIds),
+    ]);
+
+    const reqs = reqsRes.data || [];
+    const docs = docsRes.data || [];
+
+    trips = trips.map((t) => {
+      const tReqs = reqs.filter((r) => r.trip_id === t.id);
+      const tDocs = docs.filter((d) => d.trip_id === t.id);
+      return {
+        ...t,
+        requiredDocsCount: tReqs.length,
+        uploadedDocsCount: tDocs.length,
+      };
+    });
   }
 
   const upcomingTrips = trips.filter(t => new Date(t.start_date) >= new Date() || t.status === 'upcoming');
@@ -92,39 +107,15 @@ export default async function EmployeeDashboardPage() {
           <h2 className="text-3xl font-bold text-primary-dark mb-2">
             Welcome back, {profile?.full_name?.split(' ')[0] || 'Traveler'} 👋
           </h2>
-          <p className="text-slate-500">Here's a summary of your upcoming business travel.</p>
+          <p className="text-slate-500">Here's a summary of your assigned business travel and required documents.</p>
         </div>
         <div className="flex gap-6 md:gap-4 w-full md:w-auto">
-          <div className="text-center px-4 md:px-6 border-r border-slate-200 flex-1 md:flex-none">
+          <div className="text-center px-4 md:px-6 flex-1 md:flex-none">
             <p className="text-2xl font-bold text-primary-dark">{upcomingTrips.length}</p>
             <p className="text-sm text-slate-500 font-medium whitespace-nowrap">Upcoming Trips</p>
           </div>
-          <div className="text-center px-4 md:px-6 flex-1 md:flex-none">
-            <p className={`text-2xl font-bold ${docsCount.verified < docsCount.total ? 'text-status-orange' : 'text-status-green'}`}>
-              {docsCount.verified}/{docsCount.total}
-            </p>
-            <p className="text-sm text-slate-500 font-medium whitespace-nowrap">Docs Verified</p>
-          </div>
         </div>
       </div>
-
-      {/* Action Required Banner for Documents (if applicable) */}
-      {docsCount.total > 0 && docsCount.verified < docsCount.total && (
-        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600">
-              <FileText className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="font-bold text-orange-900">Action Required: Travel Documents</p>
-              <p className="text-sm text-orange-800">You have {docsCount.total - docsCount.verified} pending documents that require attention.</p>
-            </div>
-          </div>
-          <Link href="/employee/documents" className="px-4 py-2 bg-white text-orange-700 text-sm font-medium rounded-lg hover:bg-orange-50 transition-colors shadow-sm border border-orange-200">
-            Manage Documents
-          </Link>
-        </div>
-      )}
 
       {/* Upcoming Trips */}
       <div>

@@ -80,12 +80,12 @@
 | `app/employee/trips/[id]/page.tsx` | CREATE |
 | `app/employee/trips/actions.ts` | CREATE |
 
-**Gate ✅:**
-- [ ] Employee dashboard no longer displays the global documents verified counter.
-- [ ] Opening `/employee/trips/[id]` displays only requirements configured for that trip.
-- [ ] Uploading a file $\ge 1\text{ MB}$ or unsupported format is rejected with clear error message.
-- [ ] Valid file $< 1\text{ MB}$ uploads to private storage bucket and updates trip document status to "Uploaded".
-- [ ] Overall completion count for that specific trip recalculates dynamically.
+**Gate ✅ — ACHIEVED:**
+- [x] Employee dashboard no longer displays the global documents verified counter or global document action banner.
+- [x] Opening `/employee/trips/[id]` displays only requirements configured by the Admin for that specific trip.
+- [x] Uploading a file $\ge 1\text{ MB}$ or unsupported format is rejected with clear error message (validated on both client and server).
+- [x] Valid file $< 1\text{ MB}$ uploads to private storage bucket `travel-documents` and updates trip document status to "Uploaded".
+- [x] Overall completion count for that specific trip recalculates dynamically and updates card badge (`2/3 Docs Uploaded`).
 
 ---
 
@@ -144,8 +144,8 @@
 |:---:|---|:---:|---|:---:|:---:|
 | 1 | Database Schema, Storage Bucket & Validation Helpers | ✅ Done | Gemini 3.1 Pro (High) | 1 | 1 |
 | 2 | Admin Trip Document Requirements Configuration | ✅ Done | Gemini 3.8 Flash (High) | 0 | 2 |
-| 3 | Employee Trip-Specific Uploads & Document Vault | ⏳ Next | Gemini 3.8 Flash (High) | 2 | 2 |
-| 4 | Admin In-App Minimal Document Preview Modal | — | Gemini 3.7 Flash (High) | 1 | 1 |
+| 3 | Employee Trip-Specific Uploads & Document Vault | ✅ Done | Gemini 3.8 Flash (High) | 3 | 2 |
+| 4 | Admin In-App Minimal Document Preview Modal | ⏳ Next | Gemini 3.7 Flash (High) | 1 | 1 |
 | 5 | Phase 1 Integration Testing & Build Verification | — | Gemini 3.8 Flash (High) | 0 | 1 |
 
 ---
