@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { ensureAdminCompany } from '@/app/admin/employees/actions';
+import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/validation';
 
 export interface CreateTripInput {
   destination: string;
@@ -14,6 +15,7 @@ export interface CreateTripInput {
   totalBudget: number;
   travelerIds: string[];
   coordinatorId: string;
+  requiredDocuments?: string[];
 }
 
 export interface CreateTripResult {
@@ -93,6 +95,26 @@ export async function createTripAction(input: CreateTripInput): Promise<CreateTr
     // Rollback the trip so we don't leave an orphan record
     await dbClient.from('trips').delete().eq('id', trip.id);
     return { success: false, error: assignErr.message || 'Failed to assign travelers to trip.' };
+  }
+
+  // 3. Insert trip_document_requirements
+  if (input.requiredDocuments && input.requiredDocuments.length > 0) {
+    const docRequirements = input.requiredDocuments.map((docType) => ({
+      trip_id: trip.id,
+      document_type: docType,
+      title: DOCUMENT_TYPE_LABELS[docType as DocumentType] || docType,
+      is_mandatory: true,
+    }));
+
+    const { error: reqErr } = await dbClient.from('trip_document_requirements').insert(docRequirements);
+
+    if (reqErr) {
+      console.error('[createTripAction] Document requirements insert failed:', reqErr.message, reqErr.details);
+      // Rollback assignments and trip
+      await dbClient.from('trip_assignments').delete().eq('trip_id', trip.id);
+      await dbClient.from('trips').delete().eq('id', trip.id);
+      return { success: false, error: reqErr.message || 'Failed to configure trip document requirements.' };
+    }
   }
 
   return { success: true, tripId: trip.id };

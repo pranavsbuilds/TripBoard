@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
@@ -8,6 +8,7 @@ import { IndiaDatePicker } from '@/components/ui/IndiaDatePicker';
 import { RupeeInput } from '@/components/ui/RupeeInput';
 import { toISODate, formatToINR } from '@/lib/format';
 import { createTripAction } from '@/app/admin/trips/actions';
+import { DOCUMENT_TYPES, DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/validation';
 import { ArrowLeft, Star, Plus } from 'lucide-react';
 
 interface Employee {
@@ -26,6 +27,15 @@ export default function CreateTripPage() {
   const [purpose, setPurpose] = useState('Business Conference');
   const [startDate, setStartDate] = useState('20/10/2026');
   const [endDate, setEndDate] = useState('27/10/2026');
+
+  // Document requirements states
+  const [selectedDocs, setSelectedDocs] = useState<DocumentType[]>([
+    'passport',
+    'visa',
+    'ticket',
+  ]);
+  const [isDocDropdownOpen, setIsDocDropdownOpen] = useState(false);
+  const docDropdownRef = useRef<HTMLDivElement>(null);
 
   // Budget states
   const [groupBudget, setGroupBudget] = useState<number>(100000);
@@ -60,6 +70,36 @@ export default function CreateTripPage() {
     }
     fetchEmployees();
   }, [supabase]);
+
+  // Close doc dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (docDropdownRef.current && !docDropdownRef.current.contains(event.target as Node)) {
+        setIsDocDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const toggleDocument = (docKey: DocumentType) => {
+    if (selectedDocs.includes(docKey)) {
+      setSelectedDocs(selectedDocs.filter((key) => key !== docKey));
+    } else {
+      setSelectedDocs([...selectedDocs, docKey]);
+    }
+  };
+
+  const docSelectedSummary = useMemo(() => {
+    if (selectedDocs.length === 0) {
+      return 'None Selected (Optional)';
+    }
+    const labels = selectedDocs.map((key) => DOCUMENT_TYPE_LABELS[key] || key);
+    if (labels.length <= 3) {
+      return `${labels.join(', ')} (${labels.length} Selected)`;
+    }
+    return `${labels.slice(0, 2).join(', ')} +${labels.length - 2} more (${labels.length} Selected)`;
+  }, [selectedDocs]);
 
   // Handle traveler toggle
   const toggleTraveler = (empId: string) => {
@@ -117,6 +157,7 @@ export default function CreateTripPage() {
       totalBudget: totalApprovedBudget,
       travelerIds: selectedTravelerIds,
       coordinatorId,
+      requiredDocuments: selectedDocs,
     });
 
     if (!result.success) {
@@ -213,6 +254,57 @@ export default function CreateTripPage() {
               onChange={(formatted) => setEndDate(formatted)}
               required
             />
+          </div>
+
+          {/* COMPACT DROPDOWN CHECKBOX: REQUIRED TRAVEL DOCUMENTS */}
+          <div className="pt-2" ref={docDropdownRef}>
+            <label className="block text-xs uppercase font-bold text-slate-600 mb-1.5">
+              Required Travel Documents
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsDocDropdownOpen((prev) => !prev)}
+                className="w-full px-4 py-2.5 bg-[#F8FCFF] border border-[#D5E5F2] hover:border-brand-blue rounded-xl text-sm font-medium text-primary-dark flex items-center justify-between outline-none transition text-left cursor-pointer"
+              >
+                <span className="truncate font-medium text-slate-700">
+                  {docSelectedSummary}
+                </span>
+                <span
+                  className={`text-slate-400 text-xs ml-2 transition-transform duration-200 ${
+                    isDocDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                >
+                  ▼
+                </span>
+              </button>
+
+              {/* Compact Checkbox Menu */}
+              {isDocDropdownOpen && (
+                <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-lg z-30 p-2 space-y-1 max-h-60 overflow-y-auto">
+                  {DOCUMENT_TYPES.map((docType) => {
+                    const isChecked = selectedDocs.includes(docType);
+                    return (
+                      <label
+                        key={docType}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm text-primary-dark select-none"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleDocument(docType)}
+                          className="w-4 h-4 text-brand-blue rounded border-slate-300"
+                        />
+                        <span>{DOCUMENT_TYPE_LABELS[docType]}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <span className="text-[11px] text-slate-400 mt-1 block">
+              Selected document types will be required for travelers on this trip.
+            </span>
           </div>
         </div>
 
