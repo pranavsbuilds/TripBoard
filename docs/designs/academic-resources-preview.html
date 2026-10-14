@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripBoard - Academic Resources Preview (Assignments &amp; Experiments)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-dark": "#071D3A",
+                        "primary-blue": "#172B4D",
+                        "brand-blue": "#2E5BFF",
+                        "bg-ice": "#EAF5FC",
+                        "accent-gold": "#D4AF37",
+                        "gold-btn": "#C9A227",
+                        "gold-btn-hover": "#A98717",
+                        "gold-light": "#F4D675",
+                        "status-green": "#2ECC71",
+                        "status-orange": "#F39C12",
+                    },
+                    boxShadow: {
+                        "card": "0 4px 20px rgba(0,0,0,0.08)",
+                        "nav": "0 4px 20px rgba(7,29,58,0.25)",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg-ice text-primary-blue font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- PREVIEW NOTICE BAR -->
+    <div class="bg-slate-900 border-b border-slate-800 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs text-white sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-status-green animate-pulse"></span>
+            <span class="font-bold text-accent-gold">UI Preview: Home Page Academic Resources (8 Assignments &amp; 10 Experiments)</span>
+        </div>
+        <div class="flex gap-2 mt-2 sm:mt-0">
+            <a href="#assignments" class="px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white">Jump to Assignments (8)</a>
+            <a href="#experiments" class="px-3 py-1 rounded bg-slate-800 text-slate-300 font-semibold hover:text-white">Jump to Experiments (10)</a>
+            <button onclick="openPdfModal('Assignment 1: System Requirements Analysis', '/home/Assignment/Assignment_1.pdf')" class="px-3 py-1 rounded bg-gold-btn text-primary-dark font-bold">Preview In-App PDF Viewer</button>
+        </div>
+    </div>
+
+    <!-- NAVBAR (MATCHING app/page.tsx) -->
+    <header class="min-h-[110px] md:h-[125px] relative flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-3 md:py-0 gap-3 md:gap-0 bg-cover bg-right md:bg-center bg-no-repeat shadow-nav border-b border-slate-200" style="background-image: url('../designs/Assets/bg2.png'); background-color: #0c3370;">
+        <div class="relative z-10 flex items-center gap-3.5">
+            <img src="../designs/Assets/logo_svg.svg" alt="TripBoard Logo" class="h-12 md:h-14 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
+            <div class="flex flex-col">
+                <span class="text-white font-black text-2xl md:text-[27px] tracking-[2px] leading-none drop-shadow-md">TRIPBOARD</span>
+                <span class="text-sky-200/90 text-[10px] md:text-[11px] font-medium tracking-wider mt-1 leading-none drop-shadow-sm">Corporate Travel Management. Simplified.</span>
+            </div>
+        </div>
+
+        <nav class="relative z-10 flex items-center gap-6 md:gap-8">
+            <a href="#" class="text-gold-light text-sm font-semibold border-b-2 border-accent-gold pb-0.5">Home</a>
+            <a href="#assignments" class="text-white text-sm font-semibold hover:text-gold-light transition">Assignments</a>
+            <a href="#experiments" class="text-white text-sm font-semibold hover:text-gold-light transition">Experiments</a>
+            <a href="#features" class="text-white text-sm font-semibold hover:text-gold-light transition">Features</a>
+            <a href="/login" class="bg-gold-btn hover:bg-gold-btn-hover text-white text-sm font-semibold py-2 px-5 rounded-md shadow-btn-gold transition">Login</a>
+        </nav>
+    </header>
+
+    <!-- SECTION 1: VIEW ASSIGNMENTS (8 ASSIGNMENTS) -->
+    <section id="assignments" class="py-16 px-6 md:px-[8%] bg-white border-b border-slate-200">
+        <div class="max-w-6xl mx-auto space-y-4">
+            <div class="text-center space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 text-brand-blue text-xs font-bold uppercase tracking-wider">
+                    Academic Course Curriculum
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-[#0B2A55] tracking-wide relative after:content-[''] after:block after:w-16 after:h-1 after:bg-gold-btn after:mx-auto after:mt-3 after:rounded-full">
+                    VIEW ASSIGNMENTS
+                </h2>
+                <p class="text-sm text-slate-500 max-w-2xl mx-auto">
+                    Explore the 8 core engineering and systems design assignments documented throughout the TripBoard architecture.
+                </p>
+            </div>
+
+            <!-- 8 Assignments Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
+                <!-- Assignment 1 -->
+                <div class="bg-bg-ice/40 p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-brand-blue transition hover:-translate-y-1 hover:shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-black font-mono bg-sky-100 text-brand-blue rounded-md">ASSIGNMENT #1</span>
+                            <span class="text-xs text-slate-400">PDF</span>
+                        </div>
+                        <h3 class="text-base font-bold text-primary-dark mb-2 line-clamp-2">System Requirements Analysis</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Enterprise workflow mapping, persona specifications, and functional boundaries.</p>
+                    </div>
+                    <button onclick="openPdfModal('Assignment 1: System Requirements Analysis', '/home/Assignment/Assignment_1.pdf')" class="w-full py-2.5 px-3 bg-white hover:bg-brand-blue hover:text-white text-primary-blue text-xs font-bold rounded-xl border border-slate-200 transition shadow-sm flex items-center justify-center gap-1.5">
+                        <span>📄</span> View PDF
+                    </button>
+                </div>
+
+                <!-- Assignment 2 -->
+                <div class="bg-bg-ice/40 p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-brand-blue transition hover:-translate-y-1 hover:shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-black font-mono bg-sky-100 text-brand-blue rounded-md">ASSIGNMENT #2</span>
+                            <span class="text-xs text-slate-400">PDF</span>
+                        </div>
+                        <h3 class="text-base font-bold text-primary-dark mb-2 line-clamp-2">Database Schema &amp; Entity Modeling</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Relational PostgreSQL schema design, foreign keys, and indexes.</p>
+                    </div>
+                    <button onclick="openPdfModal('Assignment 2: Database Schema & Entity Modeling', '/home/Assignment/Assignment_2.pdf')" class="w-full py-2.5 px-3 bg-white hover:bg-brand-blue hover:text-white text-primary-blue text-xs font-bold rounded-xl border border-slate-200 transition shadow-sm flex items-center justify-center gap-1.5">
+                        <span>📄</span> View PDF
+                    </button>
+                </div>
+
+                <!-- Assignment 3 -->
+                <div class="bg-bg-ice/40 p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-brand-blue transition hover:-translate-y-1 hover:shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-black font-mono bg-sky-100 text-brand-blue rounded-md">ASSIGNMENT #3</span>
+                            <span class="text-xs text-slate-400">PDF</span>
+                        </div>
+                        <h3 class="text-base font-bold text-primary-dark mb-2 line-clamp-2">Role-Based Access Control Architecture</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Admin, Coordinator, and Traveler permissions and RLS policies.</p>
+                    </div>
+                    <button onclick="openPdfModal('Assignment 3: Role-Based Access Control Architecture', '/home/Assignment/Assignment_3.pdf')" class="w-full py-2.5 px-3 bg-white hover:bg-brand-blue hover:text-white text-primary-blue text-xs font-bold rounded-xl border border-slate-200 transition shadow-sm flex items-center justify-center gap-1.5">
+                        <span>📄</span> View PDF
+                    </button>
+                </div>
+
+                <!-- Assignment 4 -->
+                <div class="bg-bg-ice/40 p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-brand-blue transition hover:-translate-y-1 hover:shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-black font-mono bg-sky-100 text-brand-blue rounded-md">ASSIGNMENT #4</span>
+                            <span class="text-xs text-slate-400">PDF</span>
+                        </div>
+                        <h3 class="text-base font-bold text-primary-dark mb-2 line-clamp-2">RESTful API &amp; Server Action Protocols</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Server action mutations, client-server data flow, and error handling.</p>
+                    </div>
+                    <button onclick="openPdfModal('Assignment 4: RESTful API & Server Action Protocols', '/home/Assignment/Assignment_4.pdf')" class="w-full py-2.5 px-3 bg-white hover:bg-brand-blue hover:text-white text-primary-blue text-xs font-bold rounded-xl border border-slate-200 transition shadow-sm flex items-center justify-center gap-1.5">
+                        <span>📄</span> View PDF
+                    </button>
+                </div>
+
+                <!-- Assignment 5 -->
+                <div class="bg-bg-ice/40 p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-brand-blue transition hover:-translate-y-1 hover:shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-black font-mono bg-sky-100 text-brand-blue rounded-md">ASSIGNMENT #5</span>
+                            <span class="text-xs text-slate-400">PDF</span>
+                        </div>
+                        <h3 class="text-base font-bold text-primary-dark mb-2 line-clamp-2">Multi-Tenant Enterprise Isolation</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Company tenant scoping, company domain resolution, and data leaks prevention.</p>
+                    </div>
+                    <button onclick="openPdfModal('Assignment 5: Multi-Tenant Enterprise Isolation', '/home/Assignment/Assignment_5.pdf')" class="w-full py-2.5 px-3 bg-white hover:bg-brand-blue hover:text-white text-primary-blue text-xs font-bold rounded-xl border border-slate-200 transition shadow-sm flex items-center justify-center gap-1.5">
+                        <span>📄</span> View PDF
+                    </button>
+                </div>
+
+                <!-- Assignment 6 -->
+                <div class="bg-bg-ice/40 p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-brand-blue transition hover:-translate-y-1 hover:shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-black font-mono bg-sky-100 text-brand-blue rounded-md">ASSIGNMENT #6</span>
+                            <span class="text-xs text-slate-400">PDF</span>
+                        </div>
+                        <h3 class="text-base font-bold text-primary-dark mb-2 line-clamp-2">Cloud Storage Security &amp; Signed URLs</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Private bucket architecture, tokenized signed URLs, and short expiry policies.</p>
+                    </div>
+                    <button onclick="openPdfModal('Assignment 6: Cloud Storage Security & Signed URLs', '/home/Assignment/Assignment_6.pdf')" class="w-full py-2.5 px-3 bg-white hover:bg-brand-blue hover:text-white text-primary-blue text-xs font-bold rounded-xl border border-slate-200 transition shadow-sm flex items-center justify-center gap-1.5">
+                        <span>📄</span> View PDF
+                    </button>
+                </div>
+
+                <!-- Assignment 7 -->
+                <div class="bg-bg-ice/40 p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-brand-blue transition hover:-translate-y-1 hover:shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-black font-mono bg-sky-100 text-brand-blue rounded-md">ASSIGNMENT #7</span>
+                            <span class="text-xs text-slate-400">PDF</span>
+                        </div>
+                        <h3 class="text-base font-bold text-primary-dark mb-2 line-clamp-2">Travel Compliance &amp; Verification</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Mandatory travel document requirements, status tracking, and review workflows.</p>
+                    </div>
+                    <button onclick="openPdfModal('Assignment 7: Travel Compliance & Verification', '/home/Assignment/Assignment_7.pdf')" class="w-full py-2.5 px-3 bg-white hover:bg-brand-blue hover:text-white text-primary-blue text-xs font-bold rounded-xl border border-slate-200 transition shadow-sm flex items-center justify-center gap-1.5">
+                        <span>📄</span> View PDF
+                    </button>
+                </div>
+
+                <!-- Assignment 8 -->
+                <div class="bg-bg-ice/40 p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-brand-blue transition hover:-translate-y-1 hover:shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-black font-mono bg-sky-100 text-brand-blue rounded-md">ASSIGNMENT #8</span>
+                            <span class="text-xs text-slate-400">PDF</span>
+                        </div>
+                        <h3 class="text-base font-bold text-primary-dark mb-2 line-clamp-2">Performance Optimization &amp; Audit Logs</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Query indexing, server cache boundaries, and development session tracking.</p>
+                    </div>
+                    <button onclick="openPdfModal('Assignment 8: Performance Optimization & Audit Logs', '/home/Assignment/Assignment_8.pdf')" class="w-full py-2.5 px-3 bg-white hover:bg-brand-blue hover:text-white text-primary-blue text-xs font-bold rounded-xl border border-slate-200 transition shadow-sm flex items-center justify-center gap-1.5">
+                        <span>📄</span> View PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: VIEW EXPERIMENTS (10 EXPERIMENTS) -->
+    <section id="experiments" class="py-16 px-6 md:px-[8%] bg-bg-ice">
+        <div class="max-w-6xl mx-auto space-y-4">
+            <div class="text-center space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider">
+                    Hands-On Technical Experiments
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-[#0B2A55] tracking-wide relative after:content-[''] after:block after:w-16 after:h-1 after:bg-gold-btn after:mx-auto after:mt-3 after:rounded-full">
+                    VIEW EXPERIMENTS
+                </h2>
+                <p class="text-sm text-slate-500 max-w-2xl mx-auto">
+                    Technical lab exercises and implementation experiments covering security, state orchestration, and UI performance.
+                </p>
+            </div>
+
+            <!-- 10 Experiments Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 pt-6">
+                <!-- Experiment 1 to 10 cards -->
+                <script>
+                    const experiments = [
+                        { no: 1, title: "Auth & Session Handling", desc: "Magic links, PKCE code exchange, and cookie guards." },
+                        { no: 2, title: "State Management", desc: "Asynchronous data orchestration and cache invalidation." },
+                        { no: 3, title: "File Upload & MIME Guard", desc: "Strict < 1 MB limit, extension and MIME byte checks." },
+                        { no: 4, title: "Row Level Security (RLS)", desc: "Fine-grained PostgreSQL database security rules." },
+                        { no: 5, title: "Tailwind UI Engineering", desc: "Design tokens, elevation cards, and responsive layout." },
+                        { no: 6, title: "Dual-Budget Aggregation", desc: "Separation of group capital vs per-diem allowances." },
+                        { no: 7, title: "Coordinator Orchestration", desc: "Designated traveler lead workflows and group bookings." },
+                        { no: 8, title: "In-App Document Viewer", desc: "Embedded iframe PDF and image canvas viewer." },
+                        { no: 9, title: "Edge Middleware Guards", desc: "Next.js routing proxy and role redirect gates." },
+                        { no: 10, title: "Academic Resource Serving", desc: "Database-backed resource model and static PDF integration." }
+                    ];
+
+                    experiments.forEach(exp => {
+                        document.write(`
+                            <div class="bg-white p-5 rounded-xl shadow-card border border-slate-100 hover:border-gold-btn transition hover:-translate-y-1 flex flex-col justify-between">
+                                <div>
+                                    <span class="px-2 py-0.5 text-[10px] font-black font-mono bg-amber-100 text-amber-800 rounded">EXP #${exp.no}</span>
+                                    <h4 class="text-sm font-bold text-primary-dark mt-2.5 mb-1.5">${exp.title}</h4>
+                                    <p class="text-[11px] text-slate-500 leading-normal mb-3">${exp.desc}</p>
+                                </div>
+                                <button onclick="openPdfModal('Experiment ${exp.no}: ${exp.title}', '/home/Experiment/Experiment_${exp.no}.pdf')" class="w-full py-2 bg-slate-50 hover:bg-gold-btn hover:text-white text-primary-blue text-xs font-bold rounded-lg border border-slate-200 transition">
+                                    View PDF
+                                </button>
+                            </div>
+                        `);
+                    });
+                </script>
+            </div>
+        </div>
+    </section>
+
+    <!-- IN-APP PDF VIEWER MODAL (POPUP) -->
+    <div id="pdf-modal" class="hidden fixed inset-0 z-50 bg-primary-dark/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full h-[90vh] flex flex-col overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+            <!-- Modal Header -->
+            <div class="bg-primary-dark text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">📑</span>
+                    <div>
+                        <h3 id="modal-title" class="text-base font-bold text-white leading-none">Assignment PDF</h3>
+                        <p id="modal-path" class="text-xs text-slate-300 font-mono mt-1">/home/Assignment/Assignment_1.pdf</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs bg-white/10 text-gold-light px-2.5 py-1 rounded font-mono">In-App Reader</span>
+                    <button onclick="closePdfModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-lg transition">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- PDF Viewer Canvas -->
+            <div class="flex-1 bg-slate-100 relative p-6 flex flex-col items-center justify-center text-center">
+                <!-- Fallback notice for missing PDFs -->
+                <div class="max-w-md p-8 bg-white rounded-2xl shadow-card border border-slate-200 space-y-3">
+                    <div class="w-16 h-16 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto text-3xl">
+                        📁
+                    </div>
+                    <h4 class="text-lg font-bold text-primary-dark">Academic Resource Infrastructure Ready</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        The resource metadata is stored and managed in the database (<code class="bg-slate-100 px-1 py-0.5 rounded text-primary-dark font-mono">academic_resources</code>).
+                    </p>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-left text-xs font-mono text-slate-600 space-y-1">
+                        <div>Target File Path:</div>
+                        <div class="text-brand-blue font-bold break-all" id="modal-target-path">/home/Assignment/Assignment_1.pdf</div>
+                    </div>
+                    <p class="text-[11px] text-slate-400">
+                        When the PDF file is placed in the designated folder, it will stream seamlessly in this viewer without forcing a download.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex items-center justify-between">
+                <span class="text-xs text-slate-500">TripBoard Academic Resources Hub</span>
+                <button onclick="closePdfModal()" class="px-5 py-2 bg-primary-dark hover:bg-primary-blue text-white text-xs font-bold rounded-xl transition">
+                    Return to Home Page
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary-dark text-slate-400 text-center py-5 px-4 text-xs mt-auto">
+        <p class="m-0">© 2026 TripBoard. Academic Resources Architecture Preview.</p>
+    </footer>
+
+    <script>
+        function openPdfModal(title, path) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-path').textContent = path;
+            document.getElementById('modal-target-path').textContent = 'public' + path;
+            document.getElementById('pdf-modal').classList.remove('hidden');
+        }
+
+        function closePdfModal() {
+            document.getElementById('pdf-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
